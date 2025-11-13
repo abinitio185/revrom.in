@@ -13,11 +13,13 @@ interface HomePageProps {
   instagramPosts: InstagramPost[];
   onSelectBlogPost: (post: BlogPost) => void;
   onNavigateGallery: () => void;
+  onNavigateCustomize: () => void;
 }
 
-const ArrowRightIcon: React.FC<{className?: string}> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 0 1 1.414 0l6 6a1 1 0 0 1 0 1.414l-6 6a1 1 0 0 1-1.414-1.414L14.586 11H3a1 1 0 1 1 0-2h11.586l-4.293-4.293a1 1 0 0 1 0-1.414z" clipRule="evenodd" />
+const WhatsAppIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 12c0 1.77.46 3.45 1.29 4.93L2 22l5.25-1.38c1.41.78 2.99 1.21 4.68 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zM12.04 20.15h-.01c-1.48 0-2.92-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31c-.82-1.31-1.26-2.82-1.26-4.38 0-4.41 3.58-7.99 7.99-7.99s7.99 3.58 7.99 7.99-3.58 7.99-7.99 7.99z" />
+        <path d="M9.25 7.35c-.19-.05-.44-.12-.66-.23-.22-.11-.47-.16-.67-.16-.25 0-.48.08-.68.23-.2.15-.33.32-.46.51-.13.19-.26.4-.38.63-.12.23-.23.47-.33.73-.1.26-.2.54-.27.84-.07.3-.13.61-.16.94-.03.33-.04.67-.04 1.02 0 .35.01.7.04 1.04.03.34.09.67.16 1 .07.33.17.65.29.95s.26.59.42.86c.16.27.34.52.54.76.2.24.42.46.66.66.24.2.5.38.77.54.27.16.56.3.85.42.29.12.59.22.9.3.31.08.62.15.94.19.32.04.64.07.97.08.33.01.66.02.99.02.33 0 .66-.01.99-.02.32-.01.64-.04.95-.08.31-.04.62-.1.92-.19.3-.09.6-.2.88-.33.28-.13.56-.28.81-.45.25-.17.49-.37.7-.58.21-.21.4-.44.56-.69.16-.25.3-.52.41-.8.11-.28.2-.57.26-.88.06-.31.1-.62.13-.94.03-.32.04-.65.04-.98 0-.33-.01-.66-.04-.98-.03-.32-.09-.64-.15-.95-.06-.31-.15-.61-.25-.9-.1-.29-.22-.57-.36-.84s-.3-.54-.47-.79c-.17-.25-.36-.48-.57-.69-.21-.21-.44-.39-.69-.54-.25-.15-.52-.28-.8-.38-.28-.1-.57-.18-.87-.24-.3-.06-.61-.1-.92-.12-.31-.02-.63-.03-.95-.03-1.38 0-2.69.24-3.91.71zm5.2 9.5c-.11.19-.24.36-.39.51s-.32.28-.51.39c-.19.11-.4.2-.62.27-.22.07-.45.13-.69.16-.24.03-.49.05-.73.05-.93 0-1.81-.19-2.61-.56-.8-.37-1.51-.88-2.12-1.5-.61-.62-1.12-1.33-1.5-2.12-.38-.8-.57-1.68-.57-2.61 0-.49.06-.97.17-1.44.11-.47.28-.92.49-1.34.21-.42.47-.81.77-1.15.3-.34.64-.63 1.01-.86.37-.23.77-.41 1.18-.53.41-.12.83-.18 1.25-.18.41 0 .82.06 1.21.17s.77.28 1.12.49c.35.21.67.47.95.77.28.3.52.64.71 1.01.19.37.33.76.43 1.17.1.41.15.83.15 1.25 0 .46-.06.91-.17 1.35-.11.44-.28.86-.5 1.26-.22.4-.48.77-.79 1.1-.31.33-.66.62-1.04.85z" />
     </svg>
 );
 
@@ -50,7 +52,7 @@ const DepartureStatusBadge: React.FC<{ status: Departure['status'] }> = ({ statu
   return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
 };
 
-const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, onBookNow, blogPosts, galleryPhotos, instagramPosts, onSelectBlogPost, onNavigateGallery }) => {
+const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, onBookNow, blogPosts, galleryPhotos, instagramPosts, onSelectBlogPost, onNavigateGallery, onNavigateCustomize }) => {
   const featuredTrips = trips.slice(0, 3);
   const latestPosts = blogPosts.slice(0, 3);
   const galleryPreview = galleryPhotos.slice(0, 6);
@@ -122,10 +124,10 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
                         <button 
                           onClick={() => onBookNow(trip)}
                           disabled={departure.status === 'Sold Out'}
-                          className="flex items-center space-x-2 bg-orange-500 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transform hover:scale-105"
+                          className="flex items-center space-x-2 bg-green-500 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transform hover:scale-105"
                         >
-                          <span>Book Now</span>
-                          <ArrowRightIcon className="w-4 h-4" />
+                          <WhatsAppIcon className="w-5 h-5" />
+                          <span>Inquire Now</span>
                         </button>
                      </div>
                    </li>
@@ -135,9 +137,20 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
            </div>
         </div>
       </section>
+
+      {/* Customize Tour Section */}
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-slate-800">Can't Find Your Perfect Tour?</h2>
+            <p className="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Let us craft a bespoke Himalayan adventure just for you. From custom routes to private groups, we can tailor an experience to your exact needs.</p>
+            <button onClick={onNavigateCustomize} className="mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">
+                Design Your Dream Trip
+            </button>
+        </div>
+      </section>
       
       {/* Latest Blog Posts Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Latest From Our Blog</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -149,7 +162,7 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
       </section>
 
       {/* Gallery Preview Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">Explore Our Gallery</h2>
             <p className="max-w-2xl mx-auto text-slate-600 mb-12">A glimpse into the breathtaking landscapes and unforgettable moments from our tours.</p>
@@ -167,7 +180,7 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
       </section>
 
       {/* Instagram Feed Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">Follow Our Adventures</h2>

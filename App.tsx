@@ -13,8 +13,9 @@ import LoginPage from './pages/LoginPage';
 import BlogPage from './pages/BlogPage';
 import BlogDetailPage from './pages/BlogDetailPage';
 import GalleryPage from './pages/GalleryPage';
+import CustomizePage from './pages/CustomizePage';
 
-type View = 'home' | 'tripDetail' | 'booking' | 'contact' | 'admin' | 'login' | 'blog' | 'blogDetail' | 'gallery';
+type View = 'home' | 'tripDetail' | 'booking' | 'contact' | 'admin' | 'login' | 'blog' | 'blogDetail' | 'gallery' | 'customize';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
@@ -107,9 +108,12 @@ const App: React.FC = () => {
   }, [handleNavigate]);
 
   const handleBookNow = useCallback((trip: Trip) => {
-    setSelectedTrip(trip);
-    handleNavigate('booking');
-  }, [handleNavigate]);
+    const phoneNumber = '919876543210';
+    const message = `Hello Revrom.in, I'm interested in the "${trip.title}" tour. Please provide me with more details.`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  }, []);
 
   const handleSelectBlogPost = useCallback((post: BlogPost) => {
     setSelectedBlogPost(post);
@@ -120,6 +124,7 @@ const App: React.FC = () => {
   const handleNavigateContact = useCallback(() => handleNavigate('contact'), [handleNavigate]);
   const handleNavigateBlog = useCallback(() => handleNavigate('blog'), [handleNavigate]);
   const handleNavigateGallery = useCallback(() => handleNavigate('gallery'), [handleNavigate]);
+  const handleNavigateCustomize = useCallback(() => handleNavigate('customize'), [handleNavigate]);
   
   const handleNavigateAdmin = useCallback(() => {
     handleNavigate(isLoggedIn ? 'admin' : 'login');
@@ -148,6 +153,8 @@ const App: React.FC = () => {
         return selectedBlogPost && <BlogDetailPage post={selectedBlogPost} onBack={handleNavigateBlog} />;
       case 'gallery':
         return <GalleryPage photos={galleryPhotos} />;
+      case 'customize':
+        return <CustomizePage />;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'admin':
@@ -187,6 +194,7 @@ const App: React.FC = () => {
                   instagramPosts={instagramPosts}
                   onSelectBlogPost={handleSelectBlogPost}
                   onNavigateGallery={handleNavigateGallery}
+                  onNavigateCustomize={handleNavigateCustomize}
                />;
     }
   };
@@ -198,6 +206,7 @@ const App: React.FC = () => {
         onNavigateContact={handleNavigateContact} 
         onNavigateBlog={handleNavigateBlog}
         onNavigateGallery={handleNavigateGallery}
+        onNavigateCustomize={handleNavigateCustomize}
       />
       <main className="flex-grow">
         {renderContent()}
@@ -208,6 +217,7 @@ const App: React.FC = () => {
         onNavigateAdmin={handleNavigateAdmin} 
         onNavigateBlog={handleNavigateBlog}
         onNavigateGallery={handleNavigateGallery}
+        onNavigateCustomize={handleNavigateCustomize}
       />
     </div>
   );

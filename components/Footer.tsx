@@ -7,9 +7,10 @@ interface FooterProps {
   onNavigateAdmin: () => void;
   onNavigateBlog: () => void;
   onNavigateGallery: () => void;
+  onNavigateCustomize: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onNavigateHome, onNavigateContact, onNavigateAdmin, onNavigateBlog, onNavigateGallery }) => {
+const Footer: React.FC<FooterProps> = ({ onNavigateHome, onNavigateContact, onNavigateAdmin, onNavigateBlog, onNavigateGallery, onNavigateCustomize }) => {
   return (
     <footer className="bg-slate-800 text-white">
       <div className="container mx-auto px-6 py-12">
@@ -23,6 +24,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigateHome, onNavigateContact, onNa
             <ul className="space-y-2">
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-slate-300 hover:text-orange-400 transition-colors">Home</a></li>
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-slate-300 hover:text-orange-400 transition-colors">All Tours</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-slate-300 hover:text-orange-400 transition-colors">Customize Your Tour</a></li>
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-slate-300 hover:text-orange-400 transition-colors">Gallery</a></li>
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-slate-300 hover:text-orange-400 transition-colors">Blog</a></li>
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-slate-300 hover:text-orange-400 transition-colors">Contact Us</a></li>

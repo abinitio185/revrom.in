@@ -6,6 +6,7 @@ interface HeaderProps {
   onNavigateContact: () => void;
   onNavigateBlog: () => void;
   onNavigateGallery: () => void;
+  onNavigateCustomize: () => void;
 }
 
 const RevromLogo = ({ className }: { className?: string }) => (
@@ -17,14 +18,14 @@ const RevromLogo = ({ className }: { className?: string }) => (
             </g>
         </svg>
         <div className="flex flex-col">
-            <span className="text-3xl font-black tracking-tight text-orange-500" style={{fontFamily: "'Poppins', sans-serif"}}>REVROM.IN</span>
+            <span className="text-3xl font-black tracking-tighter text-orange-500" style={{fontFamily: "'Poppins', sans-serif", letterSpacing: '-0.05em'}}>REVROM.IN</span>
             <span className="text-[10px] font-semibold tracking-[0.3em] text-orange-500/80 -mt-0.5" style={{fontFamily: "'Poppins', sans-serif"}}>RIDE.ROAM.RELAX</span>
         </div>
     </div>
 );
 
 
-const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery }) => {
+const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery, onNavigateCustomize }) => {
   return (
     <header className="bg-white/80 backdrop-blur-lg shadow-md sticky top-0 z-50">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -34,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
         <div className="hidden md:flex items-center space-x-8">
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Home</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Tours</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Customize Tour</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Gallery</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Blog</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Contact</a>

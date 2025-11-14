@@ -191,7 +191,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'tripDetail':
-        return selectedTrip && <TripDetailPage trip={selectedTrip} onBookNow={handleBookNow} onBack={handleNavigateHome} onAddQuery={addItineraryQuery} />;
+        return selectedTrip && <TripDetailPage trip={selectedTrip} onBookNow={() => handleNavigate('booking')} onBack={handleNavigateHome} onAddQuery={addItineraryQuery} />;
       case 'booking':
         return selectedTrip && <BookingPage trip={selectedTrip} onBack={handleBackToDetail} />;
       case 'contact':

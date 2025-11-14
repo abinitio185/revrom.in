@@ -7,7 +7,11 @@ const CheckCircleIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
-const CustomizePage: React.FC = () => {
+interface CustomizePageProps {
+    onNavigateContact: () => void;
+}
+
+const CustomizePage: React.FC<CustomizePageProps> = ({ onNavigateContact }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -35,12 +39,12 @@ const CustomizePage: React.FC = () => {
         <div className="bg-white">
             <div className="relative h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-customize-hero/1920/1080')" }}>
                 <div className="absolute inset-0 bg-black/50"></div>
-                <div className="container mx-auto px-6 h-full flex items-center justify-center relative z-10">
+                <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-center relative z-10">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-white font-display text-center">Design Your Dream Adventure</h1>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-16 max-w-4xl">
+            <div className="container mx-auto px-4 sm:px-6 py-12 md:py-16 max-w-4xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold font-display text-slate-800">Tell Us Your Vision</h2>
                     <p className="mt-4 text-lg text-slate-600">Use the form below to outline your perfect Himalayan motorcycle tour. We'll get back to you with a custom itinerary and quote.</p>
@@ -53,7 +57,7 @@ const CustomizePage: React.FC = () => {
                         <p className="mt-2 text-green-700">Thank you for sharing your dream trip with us. Our travel experts are on it and will contact you via email within 48 hours to start planning.</p>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="bg-gray-50 p-8 rounded-lg shadow-lg space-y-6">
+                    <form onSubmit={handleSubmit} className="bg-gray-50 p-6 md:p-8 rounded-lg shadow-lg space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
@@ -98,6 +102,19 @@ const CustomizePage: React.FC = () => {
                             </button>
                         </div>
                     </form>
+                )}
+
+                {!submitted && (
+                    <div className="mt-16 text-center border-t pt-12">
+                        <h3 className="text-2xl font-bold font-display text-slate-800">Have More Questions or Specific Needs?</h3>
+                        <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Our team of Himalayan experts is here to help you plan every detail. For a more personal conversation, feel free to reach out to us directly.</p>
+                        <button 
+                            onClick={onNavigateContact}
+                            className="mt-8 bg-slate-700 hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg"
+                        >
+                            Contact Our Experts
+                        </button>
+                    </div>
                 )}
             </div>
         </div>

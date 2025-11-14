@@ -1,4 +1,4 @@
-import type { Trip, Departure, Review, BlogPost, GalleryPhoto, InstagramPost } from '../types';
+import type { Trip, Departure, Review, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery } from '../types';
 
 export const trips: Trip[] = [
   {
@@ -229,6 +229,15 @@ export const departures: Departure[] = [
 
 export const blogPosts: BlogPost[] = [
     {
+        id: 'blog-4',
+        title: 'Forged by the Frontier: Our Story from Chushul Village',
+        author: 'Tashi Wangyal, Founder',
+        date: '2024-09-10',
+        imageUrl: 'https://picsum.photos/seed/ladakh-chushul-village/800/600',
+        excerpt: 'Discover the story behind Revrom.in, born from the remote, resilient spirit of Chushul village, home to the legendary Rezang La war memorial and the strategic Chushul Heights.',
+        content: 'Our story isn\'t written in boardrooms; it\'s etched into the high-altitude desert landscapes of Ladakh, specifically in a place we call home: Chushul village. Located on the extreme frontier of India, Chushul is more than just a remote settlement; it is a land of immense beauty, harsh weather, and profound historical significance.\n\n**The Legacy of Rezang La**\n\nTo understand us, you must first understand the legacy of the land. Chushul is home to the Rezang La War Memorial, a solemn tribute to the incredible bravery of the 13th Kumaon Regiment\'s \'C\' Company, who made their last stand here during the 1962 war. This memorial is not just a structure; it\'s a testament to the resilience and courage that defines the spirit of this region. Growing up in the shadow of this valor has instilled in us a deep respect for our land and its history.\n\n**The Significance of Chushul Heights**\n\nThe landscape around our village is dominated by the strategic Chushul Heights. These are not just mountains; they are vantage points that have shaped history and offer some of the most commanding and breathtaking views of the Pangong Tso range and the Spanggur Gap. For us, these heights represent perspective, a deep understanding of the terrain, and the ability to see the bigger picture—qualities we bring to every tour we design.\n\n**Our Promise: An Authentic Experience**\n\nOur roots in Chushul mean we are not just tour operators; we are storytellers and custodians of our culture. Our team, born and raised in this extreme environment, possesses an unparalleled, intimate knowledge of the routes, the weather, and the hidden gems that other tours miss. When you ride with Revrom.in, you\'re not just a tourist; you are a guest, welcomed into our world to experience the raw, unfiltered beauty and spirit of the true Ladakh. We take you beyond the postcards and into the heart of the Himalayas.'
+    },
+    {
         id: 'blog-1',
         title: 'Top 5 Must-See Monasteries in Ladakh',
         author: 'Rider Jane',
@@ -311,3 +320,62 @@ export const instagramSyncMock: { photo: Omit<GalleryPhoto, 'id'>, post: Omit<In
         }
     }
 ];
+
+export const googleReviews: GoogleReview[] = [
+    {
+        id: 'gr1',
+        authorName: 'Aarav Sharma',
+        rating: 5,
+        text: 'An absolutely unforgettable journey through Ladakh! The team at Revrom.in are true locals and their expertise is unmatched. The bikes were in perfect condition, the accommodation was fantastic, and the routes were breathtaking. This is the only way to see the Himalayas.',
+        profilePhotoUrl: 'https://i.pravatar.cc/150?u=aaron',
+        isFeatured: true
+    },
+    {
+        id: 'gr2',
+        authorName: 'Priya Patel',
+        rating: 5,
+        text: 'As a solo female rider, safety and reliability were my top concerns. The Revrom team exceeded all my expectations. The guide was incredibly supportive, the mechanic was a wizard, and I felt secure throughout the entire trip. The Spiti valley tour was tough but so rewarding. Highly recommend!',
+        profilePhotoUrl: 'https://i.pravatar.cc/150?u=priya',
+        isFeatured: true
+    },
+    {
+        id: 'gr3',
+        authorName: 'Daniel Johnson',
+        rating: 4,
+        text: 'Great trip overall. The landscapes are obviously 10/10. The only reason for 4 stars is the food at one of the camps was a bit basic, but given the remote location, it\'s understandable. The riding itself was phenomenal. Would ride with them again.',
+        profilePhotoUrl: 'https://i.pravatar.cc/150?u=daniel',
+        isFeatured: false
+    },
+    {
+        id: 'gr4',
+        authorName: 'Mei Lin',
+        rating: 5,
+        text: 'We booked a custom tour for our group of 6, and it was the adventure of a lifetime. Tashi and his team tailored the itinerary perfectly to our skill level and interests. Their local knowledge from Chushul gave us access to places and stories we would have never found on our own. It felt like we were riding with family. Thank you, Revrom!',
+        profilePhotoUrl: 'https://i.pravatar.cc/150?u=mei',
+        isFeatured: true
+    }
+];
+
+export const itineraryQueries: ItineraryQuery[] = [];
+
+export const siteContent: SiteContent = {
+    heroTitle: "The Best Ride There Is.",
+    heroSubtitle: "Unforgettable Motorcycle Adventures in the Heart of the Himalayas.",
+    adventuresTitle: "Our Adventures",
+    adventuresSubtitle: "Find the perfect ride. Filter by destination, duration, and difficulty.",
+    departuresTitle: "Upcoming Departures",
+    customizeTitle: "Can't Find Your Perfect Tour?",
+    customizeSubtitle: "Let us craft a bespoke Himalayan adventure just for you. From custom routes to private groups, we can tailor an experience to your exact needs.",
+    rootsTitle: "Our Roots: The Spirit of Chushul",
+    rootsBody: "We are not just another travel company. Our team hails from the extreme frontier village of Chushul, Ladakh. Our legacy is intertwined with the valor of Rezang La and the commanding views from Chushul Heights. This deep connection to the land gives us a unique perspective, allowing us to share the most authentic Himalayan experiences with you.",
+    rootsButton: "Read Our Story",
+    blogTitle: "Latest From Our Blog",
+    galleryTitle: "Explore Our Gallery",
+    gallerySubtitle: "A glimpse into the breathtaking landscapes and unforgettable moments from our tours.",
+    instagramTitle: "Follow Our Adventures",
+    instagramSubtitle: "Join our community on Instagram for live stories, reels, and rider features from the road.",
+    instagramUrl: "https://www.instagram.com/revrom.in",
+    googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Google&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4",
+    adminWhatsappNumber: "919876543210",
+    logoUrl: "",
+};

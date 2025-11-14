@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { BlogPost } from '../types';
 
@@ -26,7 +25,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post, onSelectPost }) => {
       onClick={() => onSelectPost(post)}
     >
       <div className="relative">
-        <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" />
+        <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" loading="lazy" />
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex items-center text-xs text-slate-500 mb-3">

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Trip } from '../types';
 
@@ -47,12 +48,12 @@ Please get back to me with more information regarding booking.
 
   return (
     <>
-    <div className="container mx-auto px-6 py-12 md:py-16">
+    <div className="container mx-auto px-4 sm:px-6 py-8 md:py-16">
         <button onClick={onBack} className="text-slate-600 hover:text-orange-500 mb-8">&larr; Back to Tour Details</button>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
-                <h1 className="text-4xl font-bold font-display mb-8">Send a Booking Inquiry</h1>
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="md:col-span-2">
+                <h1 className="text-3xl md:text-4xl font-bold font-display mb-8">Send a Booking Inquiry</h1>
+                <form onSubmit={handleSubmit} className="bg-white p-6 md:p-8 rounded-lg shadow-lg space-y-6">
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
                         <input type="text" id="name" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Your Name" />
@@ -72,17 +73,17 @@ Please get back to me with more information regarding booking.
                         </label>
                     </div>
                     <div>
-                        <button type="submit" className="w-full md:w-auto flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg">
+                        <button type="submit" className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg">
                             <WhatsAppIcon className="w-6 h-6" />
                             <span>Inquire on WhatsApp</span>
                         </button>
                     </div>
                 </form>
             </div>
-            <aside className="lg:col-span-1">
-                 <div className="sticky top-28 bg-gray-50 p-8 rounded-lg shadow-md">
+            <aside className="md:col-span-1">
+                 <div className="sticky top-28 bg-gray-50 p-6 rounded-lg shadow-md">
                     <h2 className="text-2xl font-bold font-display mb-4">Tour Summary</h2>
-                    <img src={trip.imageUrl} alt={trip.title} className="w-full h-40 object-cover rounded-md mb-4"/>
+                    <img src={trip.imageUrl} alt={trip.title} className="w-full h-40 object-cover rounded-md mb-4" loading="lazy"/>
                     <h3 className="text-xl font-semibold text-slate-800">{trip.title}</h3>
                     <p className="text-slate-500">{trip.destination}</p>
                     <div className="mt-4 border-t border-gray-200 pt-4 space-y-2">
@@ -131,5 +132,4 @@ Please get back to me with more information regarding booking.
   );
 };
 
-// Fix: Add default export to make the component available for import.
 export default BookingPage;

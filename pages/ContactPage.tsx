@@ -36,14 +36,14 @@ const ContactPage: React.FC = () => {
         <div className="bg-white">
             <div className="relative h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-contact/1920/1080')" }}>
                 <div className="absolute inset-0 bg-black/50"></div>
-                <div className="container mx-auto px-6 h-full flex items-center justify-center relative z-10">
+                <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-center relative z-10">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-white font-display text-center">Get in Touch</h1>
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    <div className="lg:col-span-2">
+            <div className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <div className="md:col-span-2">
                         <h2 className="text-3xl font-bold font-display mb-2">Send Us a Message</h2>
                         <p className="text-slate-600 mb-8">Have a question or need more information? Drop us a line!</p>
                         
@@ -78,7 +78,7 @@ const ContactPage: React.FC = () => {
                                 <div>
                                     <button 
                                         type="submit" 
-                                        className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg"
+                                        className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg"
                                     >
                                         Send Message
                                     </button>
@@ -87,7 +87,7 @@ const ContactPage: React.FC = () => {
                         )}
                     </div>
                     
-                    <aside className="lg:col-span-1">
+                    <aside className="md:col-span-1">
                          <div className="bg-gray-50 p-8 rounded-lg shadow-md">
                             <h3 className="text-2xl font-bold font-display mb-4">Contact Information</h3>
                             <ul className="space-y-4 text-slate-600">

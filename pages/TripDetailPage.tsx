@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import type { Trip, Review } from '../types';
+
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import type { Trip, Review, ItineraryQuery } from '../types';
 import { generatePackingList } from '../services/geminiService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import TripRouteMap from '../components/TripRouteMap';
@@ -8,7 +9,12 @@ interface TripDetailPageProps {
   trip: Trip;
   onBookNow: (trip: Trip) => void;
   onBack: () => void;
+  onAddQuery: (query: Omit<ItineraryQuery, 'id' | 'date'>) => void;
 }
+
+const XIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+);
 
 const CheckCircleIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
@@ -46,6 +52,25 @@ const TwitterIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
+const DownloadIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" />
+      <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
+    </svg>
+);
+
+const WhatsAppIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 12c0 1.77.46 3.45 1.29 4.93L2 22l5.25-1.38c1.41.78 2.99 1.21 4.68 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zM16.88 15.18c-.3-.15-1.76-.86-2.03-1.02-.27-.15-.47-.15-.67.15-.2.29-.76.96-.94 1.15-.17.19-.34.22-.64.07-.3-.15-1.31-.48-2.5-1.54-1.2-1.06-1.55-1.84-1.71-2.14-.15-.3-.02-.46.13-.61.13-.13.29-.35.44-.52.15-.17.2-.22.3-.37.1-.15.05-.29-.02-.44-.08-.15-.67-1.61-.92-2.19-.24-.58-.49-.5-.67-.5h-.4c-.2 0-.5.08-.76.33-.26.25-.98.96-.98 2.37 0 1.41.93 2.78 1.06 2.96.13.19 1.91 3.01 4.63 4.1.72.29 1.28.46 1.71.58.71.2 1.35.17 1.86.1.56-.08 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.45-.08-.15-.28-.22-.58-.38z" />
+    </svg>
+);
+
+const InstagramIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.057 1.645-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z" />
+    </svg>
+);
+
 const StarIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
         <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.135-.662 1.456 0l1.86 3.847 4.25.618c.73.107 1.022.992.494 1.505l-3.076 2.998.726 4.232c.124.725-.638 1.282-1.28.948L10 15.347l-3.818 2.007c-.642.335-1.404-.223-1.28-.948l.726-4.232L2.55 8.854c-.528-.513-.236-1.398.494-1.505l4.25-.618 1.86-3.847z" clipRule="evenodd" />
@@ -76,11 +101,15 @@ const StarRating: React.FC<{ rating: number; onRatingChange?: (rating: number) =
 };
 
 
-const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack }) => {
+const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack, onAddQuery }) => {
   const [packingList, setPackingList] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
+  const [queryForm, setQueryForm] = useState({ name: '', whatsappNumber: '', planningTime: '1-3 Months' });
+  const [querySubmitted, setQuerySubmitted] = useState(false);
+
 
   const sortedReviews = useMemo(() => {
     return [...trip.reviews].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -93,6 +122,9 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
   const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`;
+  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
+  const instagramShareUrl = `https://www.instagram.com`;
+
 
   const goToPrevious = useCallback(() => {
     const isFirstSlide = currentIndex === 0;
@@ -127,6 +159,25 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
     }
   }, [trip]);
   
+  const handleQueryFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setQueryForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+  
+  const handleQuerySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onAddQuery({
+      tripId: trip.id,
+      tripTitle: trip.title,
+      ...queryForm
+    });
+    setQuerySubmitted(true);
+    setTimeout(() => {
+        setIsQueryModalOpen(false);
+        setQuerySubmitted(false);
+        setQueryForm({ name: '', whatsappNumber: '', planningTime: '1-3 Months' });
+    }, 4000);
+  };
+
   const renderInlineMarkdown = (text: string): React.ReactNode => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
@@ -172,29 +223,32 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
   return (
     <div className="bg-white">
       {/* Hero */}
-      <div 
-        className="relative h-[50vh] bg-cover bg-center group" 
-        style={{ 
-          backgroundImage: `url(${trip.gallery[currentIndex]})`,
-          transition: 'background-image 0.5s ease-in-out'
-        }}
-      >
+      <div className="relative h-[50vh] md:h-[60vh] bg-black group">
+        {trip.gallery.map((imgUrl, index) => (
+            <img
+              key={index}
+              src={imgUrl}
+              alt={`${trip.title} gallery ${index + 1}`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${currentIndex === index ? 'opacity-100' : 'opacity-0'}`}
+            />
+        ))}
         <div className="absolute inset-0 bg-black/40"></div>
         
-        <button onClick={goToPrevious} aria-label="Previous image" className="absolute top-1/2 left-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
+        <button onClick={goToPrevious} aria-label="Previous image" className="absolute top-1/2 left-2 sm:left-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
             <ChevronLeftIcon className="w-6 h-6" />
         </button>
-        <button onClick={goToNext} aria-label="Next image" className="absolute top-1/2 right-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
+        <button onClick={goToNext} aria-label="Next image" className="absolute top-1/2 right-2 sm:right-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
             <ChevronRightIcon className="w-6 h-6" />
         </button>
         
-        <div className="container mx-auto px-6 h-full flex flex-col justify-end pb-12 relative z-10">
-          <button onClick={onBack} className="absolute top-8 left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-20">&larr; Back to all tours</button>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white font-display">{trip.title}</h1>
-          <p className="text-lg text-white mt-2">{trip.destination} | {trip.duration} Days</p>
+        <div className="container mx-auto px-4 sm:px-6 h-full flex flex-col justify-end pb-8 md:pb-12 relative z-10">
+          <button onClick={onBack} className="absolute top-4 left-4 sm:top-8 sm:left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-20">&larr; Back to all tours</button>
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white font-display">{trip.title}</h1>
+          <p className="text-md md:text-lg text-white mt-2">{trip.destination} | {trip.duration} Days</p>
         </div>
         
-        <div className="absolute bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-2">
+        <div className="absolute bottom-3 md:bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-2">
           {trip.gallery.map((_, slideIndex) => (
             <button
               key={slideIndex}
@@ -206,10 +260,10 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="container mx-auto px-4 sm:px-6 py-8 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <h2 className="text-3xl font-bold font-display mb-4">Tour Overview</h2>
             <div className="mb-8 prose max-w-none text-slate-600">
               {renderMarkdown(trip.longDescription)}
@@ -235,7 +289,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
               </>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-12">
               <div>
                 <h3 className="text-2xl font-bold font-display mb-4">What's Included</h3>
                 <ul className="space-y-2">
@@ -294,8 +348,8 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
           </div>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-28 bg-gray-50 p-8 rounded-lg shadow-md">
+          <aside className="md:col-span-1">
+            <div className="sticky top-28 bg-gray-50 p-6 md:p-8 rounded-lg shadow-md">
               <p className="text-3xl font-bold text-slate-800">₹{trip.price.toLocaleString('en-IN')}<span className="text-base font-normal text-slate-500">/person</span></p>
               <div className="mt-4">
                   <h4 className="font-semibold mb-2">Difficulty</h4>
@@ -303,6 +357,10 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
               </div>
               <button onClick={() => onBookNow(trip)} className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg text-lg transition-transform transform hover:scale-105">
                 Book This Tour
+              </button>
+              <button onClick={() => setIsQueryModalOpen(true)} className="mt-3 w-full flex items-center justify-center gap-2 border-2 border-orange-500 text-orange-500 font-bold py-2.5 rounded-lg text-md transition-all hover:bg-orange-500 hover:text-white">
+                <DownloadIcon className="w-5 h-5"/>
+                <span>Download Itinerary</span>
               </button>
               <div className="mt-8">
                 <h4 className="font-semibold mb-2">Activities</h4>
@@ -313,34 +371,70 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h4 className="font-semibold mb-3 text-center text-slate-600">Share This Adventure</h4>
-                <div className="flex justify-center items-center gap-4">
-                  <a 
-                    href={facebookShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Share on Facebook"
-                    className="text-gray-500 hover:text-blue-600 transition-colors"
-                  >
-                    <FacebookIcon className="w-8 h-8" />
-                  </a>
-                  <a 
-                    href={twitterShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Share on Twitter"
-                    className="text-gray-500 hover:text-sky-500 transition-colors"
-                  >
-                    <TwitterIcon className="w-8 h-8" />
-                  </a>
-                </div>
+              <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                  <h4 className="font-semibold mb-3 text-slate-700">Share This Adventure</h4>
+                  <div className="flex justify-center items-center gap-4">
+                      <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" className="text-gray-500 hover:text-green-500 transition-colors">
+                          <WhatsAppIcon className="w-7 h-7" />
+                      </a>
+                      <a href={facebookShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" className="text-gray-500 hover:text-blue-600 transition-colors">
+                          <FacebookIcon className="w-7 h-7" />
+                      </a>
+                      <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter" className="text-gray-500 hover:text-sky-500 transition-colors">
+                          <TwitterIcon className="w-7 h-7" />
+                      </a>
+                      <a href={instagramShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Instagram" className="text-gray-500 hover:text-pink-500 transition-colors">
+                          <InstagramIcon className="w-7 h-7" />
+                      </a>
+                  </div>
               </div>
 
             </div>
           </aside>
         </div>
       </div>
+
+      {isQueryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsQueryModalOpen(false)}>
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full mx-4 relative transform transition-all" onClick={e => e.stopPropagation()}>
+                <button onClick={() => setIsQueryModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" aria-label="Close modal"><XIcon className="w-6 h-6" /></button>
+                
+                {querySubmitted ? (
+                    <div className="text-center py-8">
+                        <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                        <h3 className="text-2xl font-bold font-display text-slate-800">Thank You!</h3>
+                        <p className="text-slate-600 mt-2">Your inquiry has been sent. An admin will contact you on WhatsApp shortly. You can now download the itinerary.</p>
+                        <a href="#" onClick={(e) => { e.preventDefault(); alert("Actual PDF download would start here!"); }} className="mt-6 inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md">Download Now</a>
+                    </div>
+                ) : (
+                    <>
+                        <h3 className="text-2xl font-bold font-display text-slate-800 mb-2">Get The Full Itinerary</h3>
+                        <p className="text-slate-600 mb-6">Just enter your details below and we'll connect with you on WhatsApp to share the detailed PDF itinerary.</p>
+                        <form onSubmit={handleQuerySubmit} className="space-y-4">
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
+                                <input type="text" name="name" id="name" value={queryForm.name} onChange={handleQueryFormChange} required className="mt-1 w-full p-2 border rounded border-gray-300 focus:ring-orange-500 focus:border-orange-500"/>
+                            </div>
+                            <div>
+                                <label htmlFor="whatsappNumber" className="block text-sm font-medium text-slate-700">WhatsApp Number</label>
+                                <input type="tel" name="whatsappNumber" id="whatsappNumber" value={queryForm.whatsappNumber} onChange={handleQueryFormChange} required placeholder="+91 98765 43210" className="mt-1 w-full p-2 border rounded border-gray-300 focus:ring-orange-500 focus:border-orange-500"/>
+                            </div>
+                            <div>
+                                <label htmlFor="planningTime" className="block text-sm font-medium text-slate-700">When are you planning to travel?</label>
+                                <select name="planningTime" id="planningTime" value={queryForm.planningTime} onChange={handleQueryFormChange} className="mt-1 w-full p-2 border rounded border-gray-300 bg-white focus:ring-orange-500 focus:border-orange-500">
+                                    <option>1-3 Months</option>
+                                    <option>3-6 Months</option>
+                                    <option>6+ Months</option>
+                                    <option>Just Researching</option>
+                                </select>
+                            </div>
+                            <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-md transition-colors">Submit & Get Itinerary</button>
+                        </form>
+                    </>
+                )}
+            </div>
+        </div>
+      )}
     </div>
   );
 };

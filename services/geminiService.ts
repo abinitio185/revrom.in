@@ -1,5 +1,6 @@
 
-import { GoogleGenAI } from "@google/genai";
+
+import { GoogleGenAI, Modality } from "@google/genai";
 import type { Trip } from '../types';
 
 const API_KEY = process.env.API_KEY;
@@ -9,6 +10,40 @@ if (!API_KEY) {
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
+
+export const generateBlogImage = async (title: string, excerpt: string): Promise<string> => {
+  if (!API_KEY) {
+    // Return a default placeholder if the API key is not available
+    return "https://picsum.photos/seed/fallback-image/800/600";
+  }
+
+  const prompt = `A high-quality, vibrant photograph for a travel blog post about Himalayan motorcycle adventures. The post is titled "${title}". The main theme is: ${excerpt}. The style should be adventurous, inspiring, and visually stunning, suitable for a premium travel company. Focus on epic landscapes, winding roads, and the spirit of adventure.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [{ text: prompt }],
+      },
+      config: {
+        responseModalities: [Modality.IMAGE],
+      },
+    });
+
+    const firstPart = response.candidates?.[0]?.content?.parts?.[0];
+    if (firstPart && firstPart.inlineData) {
+      const base64ImageBytes: string = firstPart.inlineData.data;
+      return `data:image/jpeg;base64,${base64ImageBytes}`;
+    } else {
+      console.warn("No image data found in Gemini response.");
+      return "https://picsum.photos/seed/fallback-image/800/600";
+    }
+  } catch (error) {
+    console.error("Error generating blog image:", error);
+    return "https://picsum.photos/seed/fallback-error/800/600";
+  }
+};
+
 
 export const generatePackingList = async (trip: Trip): Promise<string> => {
   if (!API_KEY) {

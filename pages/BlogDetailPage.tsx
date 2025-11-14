@@ -22,26 +22,30 @@ const UserIcon: React.FC<{className?: string}> = ({ className }) => (
 const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ post, onBack }) => {
   return (
     <div className="bg-white">
-      <div className="relative h-96 bg-cover bg-center" style={{ backgroundImage: `url(${post.imageUrl})` }}>
+      <div className="relative h-72 sm:h-96 bg-cover bg-center" style={{ backgroundImage: `url(${post.imageUrl})` }}>
         <div className="absolute inset-0 bg-black/50"></div>
-        <div className="container mx-auto px-6 h-full flex flex-col justify-end pb-12 relative z-10">
-           <button onClick={onBack} className="absolute top-8 left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-20">&larr; Back to Blog</button>
-           <h1 className="text-4xl md:text-5xl font-extrabold text-white font-display">{post.title}</h1>
-           <div className="flex items-center text-sm text-gray-200 mt-4">
-                <UserIcon className="w-4 h-4 mr-2" />
-                <span>By {post.author}</span>
-                <span className="mx-3">|</span>
-                <CalendarIcon className="w-4 h-4 mr-2" />
-                <span>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <div className="container mx-auto px-4 sm:px-6 h-full flex flex-col justify-end pb-8 md:pb-12 relative z-10">
+           <button onClick={onBack} className="absolute top-4 left-4 sm:top-8 sm:left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-20">&larr; Back to Blog</button>
+           <h1 className="text-3xl md:text-5xl font-extrabold text-white font-display">{post.title}</h1>
+           <div className="flex flex-col sm:flex-row items-start sm:items-center text-sm text-gray-200 mt-4 gap-2 sm:gap-0">
+                <div className="flex items-center">
+                    <UserIcon className="w-4 h-4 mr-2" />
+                    <span>By {post.author}</span>
+                </div>
+                <span className="hidden sm:block mx-3">|</span>
+                <div className="flex items-center">
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    <span>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
            </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-16 max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 py-12 md:py-16 max-w-4xl">
          <div className="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             {post.content.split('\n\n').map((paragraph, index) => {
               if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                return <h3 key={index} className="text-2xl font-bold font-display mt-8 mb-4">{paragraph.replaceAll('**', '')}</h3>;
+                return <h3 key={index} className="text-2xl font-bold font-display mt-8 mb-4">{paragraph.replace(/\*\*/g, '')}</h3>;
               }
               return <p key={index} className="mb-4">{paragraph}</p>;
             })}

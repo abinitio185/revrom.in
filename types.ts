@@ -58,3 +58,44 @@ export interface InstagramPost {
     likes: number;
     comments: number;
 }
+
+export interface GoogleReview {
+    id: string;
+    authorName: string;
+    rating: number;
+    text: string;
+    profilePhotoUrl: string;
+    isFeatured: boolean;
+}
+
+export interface ItineraryQuery {
+    id: string;
+    tripId: string;
+    tripTitle: string;
+    name: string;
+    whatsappNumber: string;
+    planningTime: string;
+    date: string;
+}
+
+export interface SiteContent {
+    heroTitle: string;
+    heroSubtitle: string;
+    adventuresTitle: string;
+    adventuresSubtitle: string;
+    departuresTitle: string;
+    customizeTitle: string;
+    customizeSubtitle: string;
+    rootsTitle: string;
+    rootsBody: string;
+    rootsButton: string;
+    blogTitle: string;
+    galleryTitle: string;
+    gallerySubtitle: string;
+    instagramTitle: string;
+    instagramSubtitle: string;
+    instagramUrl: string;
+    googleReviewsUrl: string;
+    adminWhatsappNumber: string;
+    logoUrl: string;
+}

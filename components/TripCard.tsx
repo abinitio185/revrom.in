@@ -9,13 +9,13 @@ interface TripCardProps {
 
 const RoadIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM4 10a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H4.75A.75.75 0 0 1 4 10z" clipRule="evenodd" />
+        <path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2zM10 15.5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75zM4.09 4.09a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06L4.09 5.15a.75.75 0 0 1 0-1.06zm9.76 9.76a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 1 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM15.91 4.09a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 0 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zm-9.76 9.76a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zM2 10a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 2 10zm14.5 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75z"/>
     </svg>
 );
 
 const CalendarIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M6 2a1 1 0 0 0-1 1v1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1V3a1 1 0 1 0-2 0v1H7V3a1 1 0 0 0-1-1zm0 5a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H6z" clipRule="evenodd" />
+        <path fillRule="evenodd" d="M5.75 3a.75.75 0 0 1 .75.75V4h7V3.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V3.75A.75.75 0 0 1 5.75 3zM4.5 8.25a.75.75 0 0 0 0 1.5h11a.75.75 0 0 0 0-1.5h-11z" clipRule="evenodd" />
     </svg>
 );
 
@@ -38,12 +38,32 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onSelectTrip, onBookNow }) =>
       onClick={() => onSelectTrip(trip)}
     >
       <div className="relative overflow-hidden">
-        <img src={trip.imageUrl} alt={trip.title} className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" />
+        <img src={trip.imageUrl} alt={trip.title} className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
         <div className={`absolute top-0 left-0 text-xs font-bold px-3 py-1 m-4 rounded-full ${difficultyColors[trip.difficulty]}`}>{trip.difficulty}</div>
-        <div className="absolute top-0 right-0 bg-slate-800 text-white font-bold px-3 py-1 m-4 rounded-md text-sm">₹{trip.price.toLocaleString('en-IN')}</div>
-        <div className="absolute bottom-0 left-0 bg-slate-800/80 backdrop-blur-sm text-white font-semibold text-sm px-3 py-1 m-4 rounded-md flex items-center gap-1.5">
-            <CalendarIcon className="w-4 h-4" />
-            <span>{trip.duration} Days</span>
+        
+        {/* Price with Tooltip */}
+        <div className="absolute top-0 right-0 m-4">
+          <div className="relative group/tooltip">
+            <div className="bg-slate-800 text-white font-bold px-3 py-1 rounded-md text-sm">₹{trip.price.toLocaleString('en-IN')}</div>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max px-3 py-1.5 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10">
+              Starting from ₹{trip.price.toLocaleString('en-IN')}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-slate-900"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Duration with Tooltip */}
+        <div className="absolute bottom-0 left-0 m-4">
+            <div className="relative group/tooltip">
+                <div className="bg-slate-800/80 backdrop-blur-sm text-white font-semibold text-sm px-3 py-1 rounded-md flex items-center gap-1.5">
+                    <CalendarIcon className="w-4 h-4" />
+                    <span>{trip.duration} Days</span>
+                </div>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max px-3 py-1.5 bg-slate-900 text-white text-xs rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10">
+                    Duration: {trip.duration} Days
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-900"></div>
+                </div>
+            </div>
         </div>
       </div>
       <div className="p-6 flex flex-col flex-grow">

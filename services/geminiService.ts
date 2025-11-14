@@ -1,6 +1,6 @@
 
 
-import { GoogleGenAI, Modality } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import type { Trip } from '../types';
 
 const API_KEY = process.env.API_KEY;
@@ -17,29 +17,28 @@ export const generateBlogImage = async (title: string, excerpt: string): Promise
     return "https://picsum.photos/seed/fallback-image/800/600";
   }
 
-  const prompt = `A high-quality, vibrant photograph for a travel blog post about Himalayan motorcycle adventures. The post is titled "${title}". The main theme is: ${excerpt}. The style should be adventurous, inspiring, and visually stunning, suitable for a premium travel company. Focus on epic landscapes, winding roads, and the spirit of adventure.`;
+  const prompt = `Photorealistic, vibrant photograph for a premium travel blog. Subject: Himalayan motorcycle adventure. The blog post is titled "${title}", focusing on: ${excerpt}. Capture the spirit of adventure with epic landscapes, winding mountain roads, and dramatic lighting. No text or logos.`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: {
-        parts: [{ text: prompt }],
-      },
+    const response = await ai.models.generateImages({
+      model: 'imagen-4.0-generate-001',
+      prompt: prompt,
       config: {
-        responseModalities: [Modality.IMAGE],
+        numberOfImages: 1,
+        aspectRatio: '4:3',
+        outputMimeType: 'image/jpeg',
       },
     });
 
-    const firstPart = response.candidates?.[0]?.content?.parts?.[0];
-    if (firstPart && firstPart.inlineData) {
-      const base64ImageBytes: string = firstPart.inlineData.data;
+    if (response.generatedImages && response.generatedImages.length > 0) {
+      const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
       return `data:image/jpeg;base64,${base64ImageBytes}`;
     } else {
-      console.warn("No image data found in Gemini response.");
+      console.warn("No image data found in Imagen response.");
       return "https://picsum.photos/seed/fallback-image/800/600";
     }
   } catch (error) {
-    console.error("Error generating blog image:", error);
+    console.error("Error generating blog image with Imagen:", error);
     return "https://picsum.photos/seed/fallback-error/800/600";
   }
 };

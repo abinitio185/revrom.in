@@ -92,11 +92,11 @@ Please get back to me with more information regarding booking.
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium text-slate-600">Price per rider:</span>
-                            <span className="font-bold">${trip.price}</span>
+                            <span className="font-bold">₹{trip.price.toLocaleString('en-IN')}</span>
                         </div>
                          <div className="flex justify-between text-lg">
                             <span className="font-semibold text-slate-700">Total (for {travelers} rider{travelers > 1 ? 's' : ''}):</span>
-                            <span className="font-extrabold text-orange-600">${trip.price * travelers}</span>
+                            <span className="font-extrabold text-orange-600">₹{(trip.price * travelers).toLocaleString('en-IN')}</span>
                         </div>
                     </div>
                     <p className="mt-4 text-sm text-slate-500">This is an inquiry, not a confirmed booking. Our team will contact you via WhatsApp to finalize the details and payment.</p>

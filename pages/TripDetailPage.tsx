@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import type { Trip, Review } from '../types';
 import { generatePackingList } from '../services/geminiService';
 import LoadingSpinner from '../components/LoadingSpinner';
+import TripRouteMap from '../components/TripRouteMap';
 
 interface TripDetailPageProps {
   trip: Trip;
@@ -225,6 +226,15 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
               ))}
             </div>
 
+            {trip.routeCoordinates && trip.routeCoordinates.length > 1 && (
+              <>
+                <h2 className="text-3xl font-bold font-display mt-12 mb-6">Route Map</h2>
+                <div className="rounded-lg overflow-hidden shadow-lg">
+                  <TripRouteMap coordinates={trip.routeCoordinates} />
+                </div>
+              </>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
               <div>
                 <h3 className="text-2xl font-bold font-display mb-4">What's Included</h3>
@@ -286,7 +296,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
           {/* Sidebar */}
           <aside className="lg:col-span-1">
             <div className="sticky top-28 bg-gray-50 p-8 rounded-lg shadow-md">
-              <p className="text-3xl font-bold text-slate-800">${trip.price}<span className="text-base font-normal text-slate-500">/person</span></p>
+              <p className="text-3xl font-bold text-slate-800">₹{trip.price.toLocaleString('en-IN')}<span className="text-base font-normal text-slate-500">/person</span></p>
               <div className="mt-4">
                   <h4 className="font-semibold mb-2">Difficulty</h4>
                   <span className={`text-sm font-bold px-3 py-1 rounded-full ${difficultyColors[trip.difficulty]}`}>{trip.difficulty}</span>

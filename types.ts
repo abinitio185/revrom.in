@@ -1,4 +1,3 @@
-
 export interface Review {
   name: string;
   rating: number; // 1-5
@@ -22,6 +21,7 @@ export interface Trip {
   activities: string[];
   difficulty: 'Intermediate' | 'Advanced' | 'Expert';
   route: string;
+  routeCoordinates: [number, number][];
   reviews: Review[];
 }
 

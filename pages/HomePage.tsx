@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost } from '../types';
 import TripCard from '../components/TripCard';
 import BlogPostCard from '../components/BlogPostCard';
+import SearchAndFilter from '../components/SearchAndFilter';
 
 interface HomePageProps {
   trips: Trip[];
@@ -53,7 +54,44 @@ const DepartureStatusBadge: React.FC<{ status: Departure['status'] }> = ({ statu
 };
 
 const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, onBookNow, blogPosts, galleryPhotos, instagramPosts, onSelectBlogPost, onNavigateGallery, onNavigateCustomize }) => {
-  const featuredTrips = trips.slice(0, 3);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [destinationFilter, setDestinationFilter] = useState('all');
+  const [durationFilter, setDurationFilter] = useState('all');
+  const [difficultyFilter, setDifficultyFilter] = useState('all');
+
+  const uniqueDestinations = useMemo(() => [...new Set(trips.map(trip => trip.destination))], [trips]);
+
+  const filteredTrips = useMemo(() => {
+    return trips.filter(trip => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch =
+        searchLower === '' ||
+        trip.title.toLowerCase().includes(searchLower) ||
+        trip.destination.toLowerCase().includes(searchLower) ||
+        trip.route.toLowerCase().includes(searchLower) ||
+        trip.shortDescription.toLowerCase().includes(searchLower);
+
+      const matchesDestination = destinationFilter === 'all' || trip.destination === destinationFilter;
+
+      let matchesDuration = true;
+      if (durationFilter !== 'all') {
+        const [min, max] = durationFilter.split('-').map(Number);
+        matchesDuration = trip.duration >= min && trip.duration <= max;
+      }
+      
+      const matchesDifficulty = difficultyFilter === 'all' || trip.difficulty === difficultyFilter;
+
+      return matchesSearch && matchesDestination && matchesDuration && matchesDifficulty;
+    });
+  }, [trips, searchTerm, destinationFilter, durationFilter, difficultyFilter]);
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setDestinationFilter('all');
+    setDurationFilter('all');
+    setDifficultyFilter('all');
+  };
+
   const latestPosts = blogPosts.slice(0, 3);
   const galleryPreview = galleryPhotos.slice(0, 6);
   
@@ -80,34 +118,59 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
         <div className="relative text-center z-10 px-4">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold font-display leading-tight mb-4">Conquer the Roof of the World</h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto">Unforgettable Motorcycle Adventures in the Heart of the Himalayas.</p>
-          <button onClick={() => { /* In a real app, this would scroll to the tours section */ }} className="mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">
+          <button onClick={() => document.getElementById('tours-section')?.scrollIntoView({ behavior: 'smooth' })} className="mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">
             Explore Tours
           </button>
         </div>
       </section>
 
-      {/* Featured Tours Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
+      {/* Our Adventures Section */}
+      <section id="tours-section" className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-slate-800">Featured Tours</h2>
-            <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Handpicked adventures for the ultimate Himalayan experience.</p>
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-slate-800">Our Adventures</h2>
+            <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Find the perfect ride. Filter by destination, duration, and difficulty.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredTrips.map(trip => (
-              <TripCard key={trip.id} trip={trip} onSelectTrip={onSelectTrip} onBookNow={onBookNow} />
-            ))}
+          
+          <SearchAndFilter
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            destinationFilter={destinationFilter}
+            setDestinationFilter={setDestinationFilter}
+            durationFilter={durationFilter}
+            setDurationFilter={setDurationFilter}
+            difficultyFilter={difficultyFilter}
+            setDifficultyFilter={setDifficultyFilter}
+            destinations={uniqueDestinations}
+            onClearFilters={handleClearFilters}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+            {filteredTrips.length > 0 ? (
+                filteredTrips.map(trip => (
+                    <TripCard key={trip.id} trip={trip} onSelectTrip={onSelectTrip} onBookNow={onBookNow} />
+                ))
+            ) : (
+                <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-16">
+                    <h3 className="text-2xl font-semibold text-slate-700">No Adventures Found</h3>
+                    <p className="text-slate-500 mt-2">Try adjusting your search or filters. The perfect ride is waiting!</p>
+                    <button onClick={handleClearFilters} className="mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition-transform duration-300 transform hover:scale-105">
+                        Clear All Filters
+                    </button>
+                </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Upcoming Departures Section */}
+      {/* All Departures Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6">
-           <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">Upcoming Departures</h2>
+           <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">All Departures</h2>
            <div className="bg-white rounded-lg shadow-xl overflow-hidden">
              <ul className="divide-y divide-gray-200">
-               {departures.map(departure => {
+              {departures.length > 0 ? (
+                departures.map(departure => {
                  const trip = findTripById(departure.tripId);
                  if (!trip) return null;
                  return (
@@ -132,7 +195,12 @@ const HomePage: React.FC<HomePageProps> = ({ trips, departures, onSelectTrip, on
                      </div>
                    </li>
                  )
-               })}
+               })
+              ) : (
+                <li className="p-6 text-center text-slate-500">
+                  No departures scheduled at the moment. Please check back soon!
+                </li>
+              )}
              </ul>
            </div>
         </div>

@@ -168,7 +168,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                                 <textarea name="shortDescription" value={formData.shortDescription || ''} onChange={handleFormChange} placeholder="Short Description" required className="w-full p-2 border rounded h-20"></textarea>
                                 <textarea name="longDescription" value={formData.longDescription || ''} onChange={handleFormChange} placeholder="Long Description (Markdown supported)" required className="w-full p-2 border rounded h-40"></textarea>
                                 <input type="number" name="duration" value={formData.duration || ''} onChange={handleFormChange} placeholder="Duration (days)" required className="w-full p-2 border rounded"/>
-                                <input type="number" name="price" value={formData.price || ''} onChange={handleFormChange} placeholder="Price" required className="w-full p-2 border rounded"/>
+                                <input type="number" name="price" value={formData.price || ''} onChange={handleFormChange} placeholder="Price (INR)" required className="w-full p-2 border rounded"/>
                                 <input name="imageUrl" value={formData.imageUrl || ''} onChange={handleFormChange} placeholder="Main Image URL" required className="w-full p-2 border rounded"/>
                                 <input name="route" value={formData.route || ''} onChange={handleFormChange} placeholder="Route (e.g. Manali - Leh)" required className="w-full p-2 border rounded"/>
                                 <select name="difficulty" value={formData.difficulty || 'Intermediate'} onChange={handleFormChange} required className="w-full p-2 border rounded">
@@ -286,7 +286,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                            <tbody>
                             {trips.map(trip => (
                                 <tr key={trip.id} className="border-b hover:bg-gray-50">
-                                    <td className="p-2">{trip.title}</td><td>{trip.duration} days</td><td>${trip.price}</td>
+                                    <td className="p-2">{trip.title}</td><td>{trip.duration} days</td><td>₹{trip.price.toLocaleString('en-IN')}</td>
                                     <td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('TRIP', trip)}>Edit</button><button onClick={() => props.onDeleteTrip(trip.id)}>Delete</button></td>
                                 </tr>
                             ))}

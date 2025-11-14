@@ -8,7 +8,7 @@ export const trips: Trip[] = [
     shortDescription: 'Conquer two of the world\'s highest motorable passes on this epic journey from Manali to Leh.',
     longDescription: '### The Ultimate Himalayan Odyssey\n\nEmbark on the ultimate Himalayan odyssey. This classic motorcycle expedition takes you from the lush green valleys of Manali to the arid, high-altitude desert of Ladakh. You will traverse treacherous passes, including the famed Khardung La, witness breathtaking landscapes, and immerse yourself in the unique culture of the region.\n\nThis is more than a tour; it\'s a rite of passage for any serious adventure rider.\n\n#### What to Expect\n* **Epic Roads:** Conquer some of the world\'s highest motorable passes.\n* **Stunning Scenery:** From green valleys to barren high-altitude deserts.\n* **Cultural Immersion:** Visit ancient monasteries and experience Ladakhi culture.\n* **A True Challenge:** A test of skill and endurance for any rider.',
     duration: 12,
-    price: 3200,
+    price: 265000,
     imageUrl: 'https://picsum.photos/seed/ladakh-bike/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-pass/1200/800',
@@ -34,6 +34,7 @@ export const trips: Trip[] = [
     activities: ['high-altitude riding', 'pass crossing', 'cultural immersion', 'landscape photography'],
     difficulty: 'Advanced',
     route: 'Manali - Jispa - Sarchu - Leh - Srinagar',
+    routeCoordinates: [[32.24, 77.18], [32.65, 77.20], [33.09, 77.58], [34.16, 77.57], [34.28, 77.60], [33.75, 78.65], [34.16, 77.57], [34.28, 76.88], [34.55, 76.13], [34.08, 74.79]],
     reviews: [
       { name: 'Alex R.', rating: 5, comment: 'An absolutely life-changing experience. The views were surreal and the Royal Enfield was a dream to ride. The team took care of everything. Highly recommended!', date: '2024-06-15' },
       { name: 'Samantha B.', rating: 4, comment: 'Incredible journey, but be prepared for the altitude! The roads are challenging but rewarding. The support crew was fantastic.', date: '2024-06-20' },
@@ -46,7 +47,7 @@ export const trips: Trip[] = [
     shortDescription: 'Explore the enigmatic cold desert of Nubra Valley, ride camels, and visit ancient monasteries.',
     longDescription: '### A Journey to the Land of Contrasts\n\nDiscover a land of contrasts on this tour to the Nubra Valley. Separated from the Indus Valley by the mighty Khardung La, Nubra is a serene desert oasis with lush villages, ancient monasteries, and the famous double-humped Bactrian camels.\n\n#### Highlights of the Expedition\n* **Khardung La Pass:** Ride over one of the world\'s highest motorable roads.\n* **Desert Oasis:** Explore the unique sand dunes of Hunder at high altitude.\n* **Bactrian Camels:** Enjoy a ride on the rare double-humped camels.\n* **Diskit Monastery:** Visit the oldest and largest monastery in Nubra Valley, with its iconic Maitreya Buddha statue.\n\nThis tour offers a perfect blend of manageable adventure riding and rich cultural exploration, ideal for those looking to experience the best of Ladakh in a shorter timeframe.',
     duration: 7,
-    price: 1950,
+    price: 160000,
     imageUrl: 'https://picsum.photos/seed/ladakh-nubra/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-camel/1200/800',
@@ -67,6 +68,7 @@ export const trips: Trip[] = [
     activities: ['motorcycle touring', 'desert exploration', 'monastery visits', 'camel riding'],
     difficulty: 'Intermediate',
     route: 'Leh - Khardung La - Nubra Valley - Pangong Tso - Leh',
+    routeCoordinates: [[34.16, 77.57], [34.28, 77.60], [34.58, 77.56], [34.20, 78.14], [33.75, 78.65], [33.99, 77.85], [34.16, 77.57]],
     reviews: [
         { name: 'John D.', rating: 5, comment: 'Perfect trip for someone with limited time. Khardung La was the highlight, and the camels in Hunder were a unique experience. Well organized.', date: '2024-07-05' },
     ]
@@ -78,7 +80,7 @@ export const trips: Trip[] = [
     shortDescription: 'An adventurous ride through the remote Changthang plateau, visiting the high-altitude lakes of Pangong and Tso Moriri.',
     longDescription: '### A Ride into the Wild Heart of Ladakh\n\nFor the seasoned rider seeking solitude and raw beauty, this tour explores the remote Changthang region. This high-altitude plateau is a land of vast open spaces, home to nomadic shepherds, rare wildlife, and the mesmerizingly beautiful lakes of Pangong Tso and Tso Moriri.\n\nIt\'s a challenging ride through some of the most isolated and stunning landscapes on earth.\n\n#### Key Highlights\n* **Remote Wilderness:** Experience the untouched beauty of the Changthang plateau.\n* **High-Altitude Lakes:** Witness the breathtaking azure waters of Pangong Tso and Tso Moriri.\n* **Unique Wildlife:** Spot rare species like the Kyang (Tibetan wild ass) and the black-necked crane.\n* **Nomadic Culture:** Get a glimpse into the life of the Changpa nomads.',
     duration: 9,
-    price: 2500,
+    price: 210000,
     imageUrl: 'https://picsum.photos/seed/ladakh-lake/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-wildlife/1200/800',
@@ -101,6 +103,7 @@ export const trips: Trip[] = [
     activities: ['adventure riding', 'wildlife spotting', 'high-altitude lakes', 'cultural exploration'],
     difficulty: 'Expert',
     route: 'Leh - Pangong - Hanle - Tso Moriri - Tso Kar - Leh',
+    routeCoordinates: [[34.16, 77.57], [33.99, 77.85], [33.75, 78.65], [32.77, 79.00], [32.90, 78.29], [33.30, 78.02], [33.77, 77.78], [34.16, 77.57]],
     reviews: [
       { name: 'Maria S.', rating: 5, comment: 'This is the real deal for adventure seekers. The landscapes are otherworldly. Tough ride, but worth every moment. The team was exceptional, especially our mechanic.', date: '2024-08-01' },
       { name: 'Kenji T.', rating: 5, comment: 'Mind-blowing beauty and solitude. Tso Moriri was a spiritual experience. Not for the faint of heart, but if you are an experienced rider, do not miss this.', date: '2024-08-05' },
@@ -113,7 +116,7 @@ export const trips: Trip[] = [
     shortDescription: 'An extreme adventure into the isolated and rugged Zanskar valley, a true test of a rider\'s spirit.',
     longDescription: '### Venture into the Last True Himalayan Kingdom\n\nThis is not just a tour; it\'s an expedition. Zanskar, one of the most remote regions in the Himalayas, is a land of stark beauty, ancient monasteries carved into cliffs, and formidable passes. This ride takes you through newly opened roads, over high passes like the Pensi La, and offers a glimpse into a way of life that has remained unchanged for centuries.\n\n#### Expedition Highlights\n* **Extreme Remoteness:** Traverse one of the most isolated regions on the planet.\n* **Pensi La Pass:** Conquer the gateway to Zanskar with stunning views of the Drang-Drung Glacier.\n* **Cliffside Monasteries:** Witness the architectural marvels of Phugtal and Karsha monasteries.\n* **Ultimate Challenge:** A demanding route for experienced riders seeking the ultimate adventure.',
     duration: 14,
-    price: 3800,
+    price: 315000,
     imageUrl: 'https://picsum.photos/seed/ladakh-zanskar/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-glacier/1200/800',
@@ -141,6 +144,7 @@ export const trips: Trip[] = [
     activities: ['expedition riding', 'glacier viewing', 'remote exploration', 'ancient monasteries'],
     difficulty: 'Expert',
     route: 'Leh - Kargil - Rangdum - Padum - Leh',
+    routeCoordinates: [[34.16, 77.57], [34.55, 76.13], [34.25, 75.87], [33.85, 76.28], [33.47, 76.88], [33.85, 76.28], [34.25, 75.87], [34.55, 76.13], [34.16, 77.57]],
     reviews: []
   },
   {
@@ -150,7 +154,7 @@ export const trips: Trip[] = [
     shortDescription: 'Journey through the moonscapes of Spiti Valley, visiting the world\'s highest villages and ancient monasteries.',
     longDescription: '### Discover the World Within a World\n\nSpiti Valley, known as "The Middle Land" between India and Tibet, is a cold desert mountain valley that promises an unforgettable adventure. This circuit takes you from the green hills of Shimla into the rugged, barren landscapes of Spiti, crossing high passes and visiting ancient Buddhist monasteries that seem to defy gravity.\n\n#### Journey Highlights\n* **Hindustan-Tibet Highway:** Ride on one of the most treacherous and beautiful roads in the world.\n* **Ancient Monasteries:** Visit the Key Monastery and the Tabo Monastery, a UNESCO World Heritage site.\n* **Highest Villages:** Visit some of the world\'s highest inhabited villages like Komic and Hikkim.\n* **Chandratal Lake:** Camp by the stunning "Moon Lake", a high-altitude wetland of breathtaking beauty.',
     duration: 11,
-    price: 3100,
+    price: 260000,
     imageUrl: 'https://picsum.photos/seed/ladakh-spiti/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-key-monastery/1200/800',
@@ -175,6 +179,7 @@ export const trips: Trip[] = [
     activities: ['high-altitude desert', 'monastery tour', 'pass crossing', 'cultural experience'],
     difficulty: 'Advanced',
     route: 'Shimla - Sangla - Kalpa - Kaza - Chandratal - Manali',
+    routeCoordinates: [[31.10, 77.17], [31.42, 78.26], [31.52, 78.03], [32.22, 78.03], [32.29, 77.63], [32.24, 77.18], [30.73, 76.77]],
     reviews: []
   },
   {
@@ -184,7 +189,7 @@ export const trips: Trip[] = [
     shortDescription: 'A soul-stirring ride through the lush valleys of Kashmir, exploring Srinagar, Gulmarg, and Pahalgam.',
     longDescription: '### Ride Through Heaven on Earth\n\nExperience the unparalleled beauty of Kashmir, often described as "Paradise on Earth." This tour is a more relaxed yet incredibly scenic journey through lush green valleys, serene lakes, and Mughal gardens. It combines the thrill of riding with the tranquility of Kashmir\'s breathtaking landscapes, offering a perfect blend of adventure and leisure.\n\n#### Tour Highlights\n* **Srinagar\'s Dal Lake:** Stay in a traditional houseboat and enjoy a Shikara ride.\n* **Mughal Gardens:** Explore the beautifully manicured Shalimar Bagh and Nishat Bagh.\n* **Gulmarg & Pahalgam:** Ride to the stunning meadows of Gulmarg and the picturesque valleys of Pahalgam.\n* **Gurez Valley:** A challenging extension to the remote and stunning Gurez Valley near the Line of Control.',
     duration: 8,
-    price: 2100,
+    price: 175000,
     imageUrl: 'https://picsum.photos/seed/ladakh-kashmir/800/600',
     gallery: [
       'https://picsum.photos/seed/ladakh-dal-lake/1200/800',
@@ -206,6 +211,7 @@ export const trips: Trip[] = [
     activities: ['leisure riding', 'scenic valleys', 'houseboat stay', 'cultural sightseeing'],
     difficulty: 'Intermediate',
     route: 'Srinagar - Gulmarg - Pahalgam - Gurez - Srinagar',
+    routeCoordinates: [[34.08, 74.79], [34.05, 74.38], [33.81, 75.12], [34.73, 74.87], [34.08, 74.79]],
     reviews: []
   }
 ];

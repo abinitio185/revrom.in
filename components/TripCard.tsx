@@ -40,7 +40,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onSelectTrip, onBookNow }) =>
       <div className="relative overflow-hidden">
         <img src={trip.imageUrl} alt={trip.title} className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110" />
         <div className={`absolute top-0 left-0 text-xs font-bold px-3 py-1 m-4 rounded-full ${difficultyColors[trip.difficulty]}`}>{trip.difficulty}</div>
-        <div className="absolute top-0 right-0 bg-slate-800 text-white font-bold px-3 py-1 m-4 rounded-md text-sm">${trip.price}</div>
+        <div className="absolute top-0 right-0 bg-slate-800 text-white font-bold px-3 py-1 m-4 rounded-md text-sm">₹{trip.price.toLocaleString('en-IN')}</div>
         <div className="absolute bottom-0 left-0 bg-slate-800/80 backdrop-blur-sm text-white font-semibold text-sm px-3 py-1 m-4 rounded-md flex items-center gap-1.5">
             <CalendarIcon className="w-4 h-4" />
             <span>{trip.duration} Days</span>

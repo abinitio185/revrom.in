@@ -203,7 +203,7 @@ const App: React.FC = () => {
       case 'gallery':
         return <GalleryPage photos={galleryPhotos} />;
       case 'customize':
-        return <CustomizePage onNavigateContact={handleNavigateContact} />;
+        return <CustomizePage onNavigateContact={handleNavigateContact} trips={trips} />;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'admin':

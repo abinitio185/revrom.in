@@ -73,3 +73,54 @@ export const generatePackingList = async (trip: Trip): Promise<string> => {
     return "Sorry, we couldn't generate a packing list at this time. Please try again later.";
   }
 };
+
+interface CustomItineraryPreferences {
+    travelers: string;
+    duration: string;
+    destinations: string;
+    style: string;
+    interests: string;
+}
+
+export const generateCustomItinerary = async (preferences: CustomItineraryPreferences, existingTrips: Trip[]): Promise<string> => {
+    if (!API_KEY) {
+        return Promise.resolve("AI features are currently unavailable. Please contact us directly for a custom itinerary.");
+    }
+
+    const tripExamplesString = existingTrips.map(trip => 
+        `- ${trip.title} (${trip.duration} days in ${trip.destination}): ${trip.shortDescription}`
+    ).join('\n');
+
+    const prompt = `You are an expert motorcycle tour planner for Revrom.in, specializing in the Indian Himalayas. Your task is to create a custom, day-by-day itinerary based on the user's preferences.
+
+The user's request is as follows:
+- Number of Riders: ${preferences.travelers}
+- Desired Duration: ${preferences.duration} days
+- Preferred Destinations/Regions: ${preferences.destinations}
+- Desired Travel Style: ${preferences.style}
+- Specific Interests: ${preferences.interests}
+
+Here are some examples of tours we currently offer, for your reference and inspiration:
+${tripExamplesString}
+
+Based on this information, generate a compelling, well-structured itinerary. The response MUST be in markdown format.
+
+The itinerary should include:
+1.  A catchy, adventurous title for the tour, starting with '#'.
+2.  A brief, exciting 2-3 sentence summary of the tour.
+3.  A day-by-day breakdown.
+4.  For each day, use a heading like '### Day X: [Title]' and provide a 2-3 sentence description of the day's activities and route.
+
+Make the itinerary sound exciting, safe, and authentic. Emphasize the unique experiences. Ensure the pacing is realistic for the duration and chosen regions. Do not include sections for 'Inclusions', 'Exclusions', or price estimates.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error generating custom itinerary:", error);
+        throw new Error("Failed to generate custom itinerary. The AI service may be temporarily unavailable.");
+    }
+};

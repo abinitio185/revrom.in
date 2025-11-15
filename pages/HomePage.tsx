@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent } from '../types';
 import TripCard from '../components/TripCard';
@@ -47,6 +48,33 @@ const StarIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
+const MountainIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 15.75L12 8.25l8.25 7.5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 20.25h18" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75l3.75-3.75" />
+    </svg>
+);
+
+const UsersIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z" />
+    </svg>
+);
+
+const CogIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1115 0m-15 0H3m18 0h-1.5m-15 0a7.5 7.5 0 1115 0m-15 0H3m18 0h-1.5M12 4.5v.01M12 19.5v.01" />
+    </svg>
+);
+
+const ShieldCheckIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" />
+    </svg>
+);
+
+
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
     <div className="flex items-center justify-center">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -72,6 +100,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   const [durationFilter, setDurationFilter] = useState('all');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [currentReview, setCurrentReview] = useState(0);
+  
+  // State for departure filters
+  const [departureDestinationFilter, setDepartureDestinationFilter] = useState('all');
+  const [departureMonthFilter, setDepartureMonthFilter] = useState('all');
 
   const featuredReviews = useMemo(() => googleReviews.filter(r => r.isFeatured), [googleReviews]);
 
@@ -125,8 +157,6 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   const latestPosts = blogPosts.slice(0, 3);
   const galleryPreview = galleryPhotos.slice(0, 6);
   
-  const findTripById = (tripId: string) => trips.find(t => t.id === tripId);
-
   const instaScrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleInstaScroll = (direction: 'left' | 'right') => {
@@ -136,6 +166,58 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       }
   };
 
+  // Combine trip data with departures for efficient filtering and rendering
+  const departuresWithTripInfo = useMemo(() => {
+    const tripMap = new Map(trips.map(trip => [trip.id, trip]));
+    return departures
+        .map(departure => ({
+            ...departure,
+            trip: tripMap.get(departure.tripId)
+        }))
+        .filter((d): d is Departure & { trip: Trip } => !!d.trip);
+  }, [departures, trips]);
+
+
+  // Memoize unique departure months for filtering
+  const uniqueDepartureMonths = useMemo(() => {
+    const monthSet = new Set<string>();
+    [...departures]
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+        .forEach(dep => {
+            const date = new Date(dep.startDate);
+            const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            monthSet.add(monthYear);
+        });
+    return Array.from(monthSet);
+  }, [departures]);
+
+  // Memoize filtered departures
+  const filteredDepartures = useMemo(() => {
+    return departuresWithTripInfo.filter(({ trip, ...departure }) => {
+        const matchesDestination = departureDestinationFilter === 'all' || trip.destination === departureDestinationFilter;
+
+        const date = new Date(departure.startDate);
+        const monthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        const matchesMonth = departureMonthFilter === 'all' || monthYear === departureMonthFilter;
+
+        return matchesDestination && matchesMonth;
+    });
+  }, [departuresWithTripInfo, departureDestinationFilter, departureMonthFilter]);
+  
+  const handleClearDepartureFilters = () => {
+      setDepartureDestinationFilter('all');
+      setDepartureMonthFilter('all');
+  };
+
+  const FeatureCard = ({ icon, title, children }: { icon: React.ReactNode, title: string, children: React.ReactNode }) => (
+    <div className="text-center p-2">
+        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 mx-auto mb-4">
+            {icon}
+        </div>
+        <h3 className="text-xl font-bold font-display mb-2 text-slate-800">{title}</h3>
+        <p className="text-slate-600 leading-relaxed">{children}</p>
+    </div>
+  );
 
   return (
     <div>
@@ -175,10 +257,53 @@ const HomePage: React.FC<HomePageProps> = (props) => {
         </div>
       </section>
 
-      {/* All Departures Section */}
+      {/* Upcoming Departures Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12">{siteContent.departuresTitle}</h2>
+           
+           {/* Departure Filters */}
+           <div className="max-w-4xl mx-auto mb-8 p-4 bg-gray-50 rounded-lg shadow">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <div className="sm:col-span-1">
+                        <label htmlFor="departureDestination" className="sr-only">Filter by Destination</label>
+                        <select
+                            id="departureDestination"
+                            value={departureDestinationFilter}
+                            onChange={(e) => setDepartureDestinationFilter(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 bg-white"
+                        >
+                            <option value="all">All Destinations</option>
+                            {uniqueDestinations.map(dest => (
+                                <option key={dest} value={dest}>{dest}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="sm:col-span-1">
+                        <label htmlFor="departureMonth" className="sr-only">Filter by Month</label>
+                        <select
+                            id="departureMonth"
+                            value={departureMonthFilter}
+                            onChange={(e) => setDepartureMonthFilter(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 bg-white"
+                        >
+                            <option value="all">All Months</option>
+                            {uniqueDepartureMonths.map(month => (
+                                <option key={month} value={month}>{month}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="sm:col-span-1 text-right">
+                        <button
+                            onClick={handleClearDepartureFilters}
+                            className="text-sm font-semibold text-orange-600 hover:text-orange-800 transition-colors"
+                        >
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
              <div className="overflow-x-auto">
                <table className="w-full text-sm text-left text-slate-600">
@@ -191,11 +316,8 @@ const HomePage: React.FC<HomePageProps> = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {departures.length > 0 ? (
-                      departures.map(departure => {
-                        const trip = findTripById(departure.tripId);
-                        if (!trip) return null;
-                        return (
+                    {filteredDepartures.length > 0 ? (
+                      filteredDepartures.map(({ trip, ...departure }) => (
                           <tr key={departure.id} className="bg-white border-b hover:bg-slate-50">
                             <th scope="row" className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
                               <a href="#" onClick={(e) => { e.preventDefault(); onSelectTrip(trip); }} className="hover:text-orange-600 transition-colors">{trip.title}</a>
@@ -207,9 +329,9 @@ const HomePage: React.FC<HomePageProps> = (props) => {
                             </td>
                           </tr>
                         )
-                      })
+                      )
                     ) : (
-                      <tr><td colSpan={4} className="p-6 text-center text-slate-500">No departures scheduled at the moment. Please check back soon!</td></tr>
+                      <tr><td colSpan={4} className="p-6 text-center text-slate-500">No departures match your criteria. Try adjusting the filters.</td></tr>
                     )}
                   </tbody>
                </table>
@@ -226,6 +348,30 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <button onClick={onNavigateCustomize} className="mt-8 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">
                 Design Your Dream Trip
             </button>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6">
+            <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold font-display text-slate-800">Why Choose Us?</h2>
+                <p className="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Experience the Himalayas with true local experts who prioritize your adventure, authenticity, and safety.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <FeatureCard title="Born & Bred in the Himalayas" icon={<MountainIcon className="w-8 h-8 text-orange-500" />}>
+                    Our team are locals from Ladakh. We know the hidden trails, secret viewpoints, and stories behind every pass because this is our home.
+                </FeatureCard>
+                <FeatureCard title="Authentic Experiences" icon={<UsersIcon className="w-8 h-8 text-orange-500" />}>
+                    Forget generic itineraries. We take you to the heart of the Himalayas, sharing meals with local families and experiencing raw, unfiltered culture.
+                </FeatureCard>
+                <FeatureCard title="Meticulously Maintained Fleet" icon={<CogIcon className="w-8 h-8 text-orange-500" />}>
+                    Our Royal Enfield Himalayans are maintained in-house by expert mechanics who know the demands of high-altitude terrain, ensuring reliability.
+                </FeatureCard>
+                <FeatureCard title="Uncompromising Safety" icon={<ShieldCheckIcon className="w-8 h-8 text-orange-500" />}>
+                    With experienced captains, certified mechanics, and a support vehicle on every tour, your safety is paramount. You just focus on the ride.
+                </FeatureCard>
+            </div>
         </div>
       </section>
 

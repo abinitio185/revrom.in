@@ -109,6 +109,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
   const [isQueryModalOpen, setIsQueryModalOpen] = useState(false);
   const [queryForm, setQueryForm] = useState({ name: '', whatsappNumber: '', planningTime: '1-3 Months' });
   const [querySubmitted, setQuerySubmitted] = useState(false);
+  const [activeDay, setActiveDay] = useState<number | null>(1);
 
 
   const sortedReviews = useMemo(() => {
@@ -125,6 +126,10 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
   const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
   const instagramShareUrl = `https://www.instagram.com`;
 
+
+  const goToThumbnail = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   const goToPrevious = useCallback(() => {
     const isFirstSlide = currentIndex === 0;
@@ -219,66 +224,95 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
     return elements;
   };
 
+  const toggleItineraryDay = (day: number) => {
+    setActiveDay(activeDay === day ? null : day);
+  };
+
 
   return (
     <div className="bg-white">
-      {/* Hero */}
-      <div className="relative h-[50vh] md:h-[60vh] bg-black group">
-        {trip.gallery.map((imgUrl, index) => (
-            <img
-              key={index}
-              src={imgUrl}
-              alt={`${trip.title} gallery ${index + 1}`}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${currentIndex === index ? 'opacity-100' : 'opacity-0'}`}
-            />
-        ))}
-        <div className="absolute inset-0 bg-black/40"></div>
-        
-        <button onClick={goToPrevious} aria-label="Previous image" className="absolute top-1/2 left-2 sm:left-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
-            <ChevronLeftIcon className="w-6 h-6" />
-        </button>
-        <button onClick={goToNext} aria-label="Next image" className="absolute top-1/2 right-2 sm:right-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
-            <ChevronRightIcon className="w-6 h-6" />
-        </button>
-        
-        <div className="container mx-auto px-4 sm:px-6 h-full flex flex-col justify-end pb-8 md:pb-12 relative z-10">
-          <button onClick={onBack} className="absolute top-4 left-4 sm:top-8 sm:left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-20">&larr; Back to all tours</button>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white font-display">{trip.title}</h1>
-          <p className="text-md md:text-lg text-white mt-2">{trip.destination} | {trip.duration} Days</p>
-        </div>
-        
-        <div className="absolute bottom-3 md:bottom-5 left-0 right-0 z-20 flex items-center justify-center gap-2">
-          {trip.gallery.map((_, slideIndex) => (
-            <button
-              key={slideIndex}
-              onClick={() => setCurrentIndex(slideIndex)}
-              aria-label={`Go to slide ${slideIndex + 1}`}
-              className={`w-2.5 h-2.5 rounded-full ${currentIndex === slideIndex ? 'bg-white' : 'bg-white/50'} hover:bg-white transition-colors`}
-            />
-          ))}
-        </div>
-      </div>
+      {/* Hero Gallery */}
+      <section className="relative bg-black group">
+          {/* Main Image Viewer */}
+          <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
+              {trip.gallery.map((imgUrl, index) => (
+                  <img
+                      key={index}
+                      src={imgUrl}
+                      alt={`${trip.title} gallery ${index + 1}`}
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${currentIndex === index ? 'opacity-100' : 'opacity-0'}`}
+                  />
+              ))}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+          </div>
+  
+          <button onClick={onBack} className="absolute top-4 left-4 sm:top-8 sm:left-6 text-white bg-black/30 hover:bg-black/50 px-3 py-1 rounded-md text-sm transition-colors z-30">&larr; Back to all tours</button>
+  
+          <button onClick={goToPrevious} aria-label="Previous image" className="absolute top-1/2 left-2 sm:left-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
+              <ChevronLeftIcon className="w-6 h-6" />
+          </button>
+          <button onClick={goToNext} aria-label="Next image" className="absolute top-1/2 right-2 sm:right-5 -translate-y-1/2 z-30 bg-black/30 text-white p-2 rounded-full hover:bg-black/50 transition-all opacity-0 group-hover:opacity-100">
+              <ChevronRightIcon className="w-6 h-6" />
+          </button>
+  
+          <div className="absolute bottom-[90px] md:bottom-[100px] left-0 right-0 z-20 px-4">
+              <div className="container mx-auto">
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-white font-display">{trip.title}</h1>
+                  <p className="text-md md:text-lg text-white mt-2">{trip.destination} | {trip.duration} Days</p>
+              </div>
+          </div>
+  
+          {/* Thumbnail Strip */}
+          <div className="absolute bottom-0 left-0 right-0 z-20 h-[90px] md:h-[100px] bg-black/50 backdrop-blur-sm">
+              <div className="container mx-auto h-full px-4 flex items-center">
+                  <div className="w-full overflow-x-auto">
+                      <div className="flex items-center gap-3">
+                          {trip.gallery.map((imgUrl, index) => (
+                              <button
+                                  key={index}
+                                  onClick={() => goToThumbnail(index)}
+                                  aria-label={`Go to image ${index + 1}`}
+                                  className={`flex-shrink-0 w-20 h-14 md:w-24 md:h-16 rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105 focus:outline-none ${currentIndex === index ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'}`}
+                              >
+                                  <img src={imgUrl} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                              </button>
+                          ))}
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
 
       <div className="container mx-auto px-4 sm:px-6 py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Main Content */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <h2 className="text-3xl font-bold font-display mb-4">Tour Overview</h2>
             <div className="mb-8 prose max-w-none text-slate-600">
               {renderMarkdown(trip.longDescription)}
             </div>
 
             <h2 className="text-3xl font-bold font-display mb-6">Daily Itinerary</h2>
-            <div className="space-y-6 border-l-2 border-orange-200 ml-3">
-              {trip.itinerary.map(item => (
-                <div key={item.day} className="relative pl-8">
-                  <div className="absolute -left-[11px] top-1 w-5 h-5 bg-orange-500 rounded-full border-4 border-white"></div>
-                  <h3 className="font-semibold text-lg text-slate-800">Day {item.day}: {item.title}</h3>
-                  <p className="text-slate-600">{item.description}</p>
-                </div>
-              ))}
+            <div className="space-y-2">
+                {trip.itinerary.map((item) => (
+                    <div key={item.day} className="border rounded-lg overflow-hidden">
+                        <button
+                            onClick={() => toggleItineraryDay(item.day)}
+                            className="w-full flex justify-between items-center p-4 text-left bg-gray-50 hover:bg-gray-100"
+                        >
+                            <h3 className="font-semibold text-lg text-slate-800">Day {item.day}: {item.title}</h3>
+                            <ChevronRightIcon className={`w-6 h-6 text-slate-500 transition-transform duration-300 ${activeDay === item.day ? 'rotate-90' : ''}`} />
+                        </button>
+                        <div className={`transition-all duration-500 ease-in-out ${activeDay === item.day ? 'max-h-screen' : 'max-h-0'}`}>
+                            <div className="p-4 border-t text-slate-600">
+                                {item.description}
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
+
 
             {trip.routeCoordinates && trip.routeCoordinates.length > 1 && (
               <>
@@ -290,16 +324,16 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-12">
-              <div>
-                <h3 className="text-2xl font-bold font-display mb-4">What's Included</h3>
-                <ul className="space-y-2">
-                  {trip.inclusions.map(item => <li key={item} className="flex items-start"><CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 shrink-0 mt-1" />{item}</li>)}
+              <div className="bg-green-50 border-l-4 border-green-400 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-bold font-display mb-4 text-green-800">What's Included</h3>
+                <ul className="space-y-3 text-slate-700">
+                  {trip.inclusions.map(item => <li key={item} className="flex items-start"><CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
                 </ul>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold font-display mb-4">What's Not Included</h3>
-                <ul className="space-y-2">
-                  {trip.exclusions.map(item => <li key={item} className="flex items-start"><XCircleIcon className="w-5 h-5 text-red-500 mr-2 shrink-0 mt-1" />{item}</li>)}
+              <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-bold font-display mb-4 text-red-800">What's Not Included</h3>
+                <ul className="space-y-3 text-slate-700">
+                  {trip.exclusions.map(item => <li key={item} className="flex items-start"><XCircleIcon className="w-6 h-6 text-red-500 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
                 </ul>
               </div>
             </div>
@@ -349,7 +383,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
           {/* Sidebar */}
           <aside className="md:col-span-1">
-            <div className="sticky top-28 bg-gray-50 p-6 md:p-8 rounded-lg shadow-md">
+            <div className="sticky top-16 bg-gray-50 p-6 md:p-8 rounded-lg shadow-md">
               <p className="text-3xl font-bold text-slate-800">₹{trip.price.toLocaleString('en-IN')}<span className="text-base font-normal text-slate-500">/person</span></p>
               <div className="mt-4">
                   <h4 className="font-semibold mb-2">Difficulty</h4>

@@ -122,33 +122,51 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Open menu">
+            <button onClick={() => setIsMobileMenuOpen(true)} aria-label="Open menu" aria-controls="mobile-menu" aria-expanded={isMobileMenuOpen}>
                 <MenuIcon className="w-6 h-6 text-slate-600" />
             </button>
         </div>
       </nav>
 
       {/* Mobile Menu */}
-      <div className={`fixed inset-0 z-50 bg-white transform ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out md:hidden`}>
-          <div className="flex justify-between items-center p-4 border-b">
-              <button onClick={() => handleMobileNavClick(onNavigateHome)}>
-                 {siteContent.logoUrl ? (
-                    <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
-                 ) : (
-                    <RevromLogo />
-                 )}
-              </button>
-              <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close menu">
-                  <XIcon className="w-6 h-6 text-slate-600" />
-              </button>
-          </div>
-          <div className="flex flex-col space-y-6 p-6">
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateHome); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Home</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateToTours, null); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">All Tours</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomize); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Customize Tour</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateGallery); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Gallery</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateBlog); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Blog</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateContact); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Contact</a>
+      <div 
+        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mobile-menu-title"
+        aria-hidden={!isMobileMenuOpen}
+        id="mobile-menu"
+      >
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          ></div>
+
+          {/* Menu Panel */}
+          <div className={`relative flex flex-col w-4/5 max-w-xs ml-auto h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className="flex justify-between items-center p-4 border-b">
+                  <h2 id="mobile-menu-title" className="sr-only">Main Menu</h2>
+                  <button onClick={() => handleMobileNavClick(onNavigateHome)}>
+                     {siteContent.logoUrl ? (
+                        <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
+                     ) : (
+                        <RevromLogo />
+                     )}
+                  </button>
+                  <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close menu">
+                      <XIcon className="w-6 h-6 text-slate-600" />
+                  </button>
+              </div>
+              <div className="flex flex-col space-y-6 p-6">
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateHome); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Home</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateToTours, null); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">All Tours</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomize); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Customize Tour</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateGallery); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Gallery</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateBlog); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Blog</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateContact); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Contact</a>
+              </div>
           </div>
       </div>
     </header>

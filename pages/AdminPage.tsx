@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery } from '../types';
 import { instagramSyncMock } from '../data/mockData';
 import TripRouteMap from '../components/TripRouteMap';
+import Pagination from '../components/Pagination';
 
 interface AdminPageProps {
     trips: Trip[];
@@ -36,7 +37,7 @@ interface AdminPageProps {
 
 const StarIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
-        <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.135-.662 1.456 0l1.86 3.847 4.25 .618c.73.107 1.022 .992.494 1.505l-3.076 2.998.726 4.232c.124.725-.638 1.282-1.28.948L10 15.347l-3.818 2.007c-.642.335-1.404-.223-1.28-.948l.726-4.232L2.55 8.854c-.528-.513-.236-1.398.494-1.505l4.25-.618 1.86-3.847z" clipRule="evenodd" />
+        <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.135-.662 1.456 0l1.86 3.847 4.25 .618c.73.107 1.022.992.494 1.505l-3.076 2.998.726 4.232c.124.725-.638 1.282-1.28.948L10 15.347l-3.818 2.007c-.642.335-1.404-.223-1.28-.948l.726-4.232L2.55 8.854c-.528-.513-.236-1.398.494-1.505l4.25-.618 1.86-3.847z" clipRule="evenodd" />
     </svg>
 );
 
@@ -65,6 +66,39 @@ const parseCoordinatesFromString = (str: string): [number, number][] => {
     }
 };
 
+const usePagination = <T,>(items: T[], itemsPerPage: number = 5) => {
+    const [currentPage, setCurrentPage] = useState(1);
+  
+    const totalPages = useMemo(() => Math.ceil(items.length / itemsPerPage), [items.length, itemsPerPage]);
+  
+    const currentItems = useMemo(() => {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return items.slice(startIndex, endIndex);
+    }, [items, currentPage, itemsPerPage]);
+  
+    const handlePageChange = (page: number) => {
+      if (page > 0 && page <= totalPages) {
+        setCurrentPage(page);
+      }
+    };
+    
+    useEffect(() => {
+      if (currentPage > totalPages && totalPages > 0) {
+          setCurrentPage(totalPages);
+      } else if (items.length > 0 && currentPage === 0 && totalPages > 0) {
+        setCurrentPage(1);
+      }
+    }, [currentPage, totalPages, items.length]);
+  
+    return {
+      currentPage,
+      totalPages,
+      handlePageChange,
+      currentItems,
+    };
+};
+
 
 const AdminPage: React.FC<AdminPageProps> = (props) => {
     const { trips, departures, blogPosts, galleryPhotos, instagramPosts, googleReviews, siteContent, onLogout, itineraryQueries } = props;
@@ -84,6 +118,57 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
 
     const findTripTitle = (tripId: string) => trips.find(t => t.id === tripId)?.title || 'Unknown Trip';
     
+    // Pagination Hooks
+    const { 
+        currentPage: queriesCurrentPage,
+        totalPages: queriesTotalPages,
+        handlePageChange: handleQueriesPageChange,
+        currentItems: currentQueries,
+    } = usePagination(itineraryQueries, 5);
+
+    const {
+        currentPage: reviewsCurrentPage,
+        totalPages: reviewsTotalPages,
+        handlePageChange: handleReviewsPageChange,
+        currentItems: currentReviews,
+    } = usePagination(googleReviews, 5);
+
+    const {
+        currentPage: tripsCurrentPage,
+        totalPages: tripsTotalPages,
+        handlePageChange: handleTripsPageChange,
+        currentItems: currentTrips,
+    } = usePagination(trips, 5);
+
+    const sortedDepartures = useMemo(() => [...departures].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()), [departures]);
+    const {
+        currentPage: departuresCurrentPage,
+        totalPages: departuresTotalPages,
+        handlePageChange: handleDeparturesPageChange,
+        currentItems: currentDepartures,
+    } = usePagination(sortedDepartures, 5);
+
+    const {
+        currentPage: blogCurrentPage,
+        totalPages: blogTotalPages,
+        handlePageChange: handleBlogPageChange,
+        currentItems: currentBlogPosts,
+    } = usePagination(blogPosts, 5);
+
+    const {
+        currentPage: galleryCurrentPage,
+        totalPages: galleryTotalPages,
+        handlePageChange: handleGalleryPageChange,
+        currentItems: currentGalleryPhotos,
+    } = usePagination(galleryPhotos, 5);
+
+    const {
+        currentPage: instagramCurrentPage,
+        totalPages: instagramTotalPages,
+        handlePageChange: handleInstagramPageChange,
+        currentItems: currentInstagramPosts,
+    } = usePagination(instagramPosts, 5);
+
     const handleOpenModal = (type: typeof modal, data: any | null = null) => {
         let initialData = data ? { ...data } : {};
         if (type === 'TRIP' && initialData.routeCoordinates) {
@@ -233,8 +318,6 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
         }
     };
     
-    const sortedDepartures = useMemo(() => [...departures].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()), [departures]);
-    
     const currentCoords = useMemo(() => {
         if (modal === 'TRIP' && typeof formData.routeCoordinates === 'string') {
             return parseCoordinatesFromString(formData.routeCoordinates);
@@ -314,7 +397,6 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                         {modal === 'REVIEW' && (<>
                              <input name="authorName" value={formData.authorName || ''} onChange={handleFormChange} placeholder="Author Name" required className={inputClass}/>
                              <div onClick={() => fileInputRef.current?.click()} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`relative w-full p-4 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${ isDragging ? 'border-orange-500 bg-orange-50' : 'border-gray-300 hover:border-orange-400' }`}><input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />{imagePreview ? <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-full mx-auto" /> : <div className="text-center text-gray-500"><p className="mt-2">Drag & drop profile photo, or <span className="font-semibold text-orange-600">click to select</span></p></div>}</div>
-                             <input name="profilePhotoUrl" value={formData.profilePhotoUrl || ''} onChange={handleFormChange} placeholder="Profile Photo URL" className={inputClass}/>
                              <textarea name="text" value={formData.text || ''} onChange={handleFormChange} placeholder="Review Text" required className={textareaClass('h-24')}></textarea>
                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                  <div><label className="font-medium">Rating:</label><input type="number" name="rating" value={formData.rating || 5} onChange={handleFormChange} min="1" max="5" required className="ml-2 w-20 p-2 border rounded"/></div>
@@ -374,30 +456,37 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                 <section className="bg-white p-6 rounded-lg shadow-md">
                     <h2 className="text-xl font-bold font-display mb-4">Itinerary Queries / Leads</h2>
                     {itineraryQueries.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="border-b">
-                                        <th className="p-2 text-left">Date</th>
-                                        <th className="p-2 text-left">Customer Name</th>
-                                        <th className="p-2 text-left">WhatsApp</th>
-                                        <th className="p-2 text-left">Interested Tour</th>
-                                        <th className="p-2 text-left">Planning Time</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itineraryQueries.map(query => (
-                                        <tr key={query.id} className="border-b hover:bg-gray-50">
-                                            <td className="p-2">{new Date(query.date).toLocaleDateString()}</td>
-                                            <td className="p-2">{query.name}</td>
-                                            <td className="p-2">{query.whatsappNumber}</td>
-                                            <td className="p-2">{query.tripTitle}</td>
-                                            <td className="p-2">{query.planningTime}</td>
+                        <>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="p-2 text-left">Date</th>
+                                            <th className="p-2 text-left">Customer Name</th>
+                                            <th className="p-2 text-left">WhatsApp</th>
+                                            <th className="p-2 text-left">Interested Tour</th>
+                                            <th className="p-2 text-left">Planning Time</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {currentQueries.map(query => (
+                                            <tr key={query.id} className="border-b hover:bg-gray-50">
+                                                <td className="p-2">{new Date(query.date).toLocaleDateString()}</td>
+                                                <td className="p-2">{query.name}</td>
+                                                <td className="p-2">{query.whatsappNumber}</td>
+                                                <td className="p-2">{query.tripTitle}</td>
+                                                <td className="p-2">{query.planningTime}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <Pagination 
+                                currentPage={queriesCurrentPage}
+                                totalPages={queriesTotalPages}
+                                onPageChange={handleQueriesPageChange}
+                            />
+                        </>
                     ) : (
                         <p className="text-slate-500">No new itinerary queries yet.</p>
                     )}
@@ -413,7 +502,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                         <table className="w-full text-sm">
                            <thead><tr className="border-b"><th className="p-2 text-left">Author</th><th className="p-2 text-left">Rating</th><th className="p-2 text-left">Featured</th><th className="p-2 text-right">Actions</th></tr></thead>
                            <tbody>
-                            {googleReviews.map(review => (
+                            {currentReviews.map(review => (
                                 <tr key={review.id} className="border-b hover:bg-gray-50">
                                     <td className="p-2 flex items-center gap-2"><img src={review.profilePhotoUrl} alt={review.authorName} className="w-8 h-8 rounded-full" loading="lazy" />{review.authorName}</td>
                                     <td className="p-2"><div className="flex">{[...Array(review.rating)].map((_, i) => <StarIcon key={i} className="w-4 h-4 text-yellow-400"/>)}</div></td>
@@ -424,31 +513,63 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                            </tbody>
                         </table>
                     </div>
+                    <Pagination 
+                        currentPage={reviewsCurrentPage}
+                        totalPages={reviewsTotalPages}
+                        onPageChange={handleReviewsPageChange}
+                    />
                 </section>
                 
                 {/* Tour Management */}
                 <section className="bg-white p-6 rounded-lg shadow-md">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4"><h2 className="text-xl font-bold font-display">Tour Management</h2><button onClick={() => handleOpenModal('TRIP')} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Add Tour</button></div>
-                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Title</th><th className="p-2 text-left">Duration</th><th className="p-2 text-left">Price</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{trips.map(trip => (<tr key={trip.id} className="border-b hover:bg-gray-50"><td className="p-2">{trip.title}</td><td>{trip.duration} days</td><td>₹{trip.price.toLocaleString('en-IN')}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('TRIP', trip)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteTrip(trip.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Title</th><th className="p-2 text-left">Duration</th><th className="p-2 text-left">Price</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{currentTrips.map(trip => (<tr key={trip.id} className="border-b hover:bg-gray-50"><td className="p-2">{trip.title}</td><td>{trip.duration} days</td><td>₹{trip.price.toLocaleString('en-IN')}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('TRIP', trip)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteTrip(trip.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <Pagination 
+                        currentPage={tripsCurrentPage}
+                        totalPages={tripsTotalPages}
+                        onPageChange={handleTripsPageChange}
+                    />
                 </section>
                 
                 {/* Departure Management */}
                 <section className="bg-white p-6 rounded-lg shadow-md">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4"><h2 className="text-xl font-bold font-display">Departure Management</h2><button onClick={() => handleOpenModal('DEPARTURE')} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Add Departure</button></div>
-                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Trip</th><th className="p-2 text-left">Start Date</th><th className="p-2 text-left">Slots</th><th className="p-2 text-left">Status</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{sortedDepartures.map(dep => (<tr key={dep.id} className="border-b hover:bg-gray-50"><td className="p-2">{findTripTitle(dep.tripId)}</td><td>{dep.startDate}</td><td>{dep.slots}</td><td>{dep.status}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('DEPARTURE', dep)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteDeparture(dep.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Trip</th><th className="p-2 text-left">Start Date</th><th className="p-2 text-left">Slots</th><th className="p-2 text-left">Status</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{currentDepartures.map(dep => (<tr key={dep.id} className="border-b hover:bg-gray-50"><td className="p-2">{findTripTitle(dep.tripId)}</td><td>{dep.startDate}</td><td>{dep.slots}</td><td>{dep.status}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('DEPARTURE', dep)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteDeparture(dep.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <Pagination 
+                        currentPage={departuresCurrentPage}
+                        totalPages={departuresTotalPages}
+                        onPageChange={handleDeparturesPageChange}
+                    />
                 </section>
 
                 {/* Blog Post Management */}
                  <section className="bg-white p-6 rounded-lg shadow-md">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4"><h2 className="text-xl font-bold font-display">Blog Post Management</h2><button onClick={() => handleOpenModal('BLOG')} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Add Post</button></div>
-                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Title</th><th className="p-2 text-left">Author</th><th className="p-2 text-left">Date</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{blogPosts.map(post => (<tr key={post.id} className="border-b hover:bg-gray-50"><td className="p-2">{post.title}</td><td>{post.author}</td><td>{post.date}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('BLOG', post)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteBlogPost(post.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Title</th><th className="p-2 text-left">Author</th><th className="p-2 text-left">Date</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{currentBlogPosts.map(post => (<tr key={post.id} className="border-b hover:bg-gray-50"><td className="p-2">{post.title}</td><td>{post.author}</td><td>{post.date}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('BLOG', post)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteBlogPost(post.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <Pagination 
+                        currentPage={blogCurrentPage}
+                        totalPages={blogTotalPages}
+                        onPageChange={handleBlogPageChange}
+                    />
                 </section>
 
                 {/* Social & Media Management */}
                  <section className="bg-white p-6 rounded-lg shadow-md">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4"><h2 className="text-xl font-bold font-display">Social & Media</h2><div className="flex items-center gap-4"><button onClick={handleSyncInstagram} disabled={isSyncing} className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 disabled:bg-purple-300">{isSyncing ? 'Syncing...' : 'Sync with Instagram'}</button>{syncMessage && <span className="text-sm text-green-600 font-medium">{syncMessage}</span>}</div></div>
-                    <div className="mt-6"><div className="flex justify-between items-center mb-2"><h3 className="text-lg font-semibold">Gallery Photos</h3><button onClick={() => handleOpenModal('GALLERY')} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Add Photo</button></div><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Preview</th><th className="p-2 text-left">Caption</th><th className="p-2 text-left">Category</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{galleryPhotos.map(photo => (<tr key={photo.id} className="border-b hover:bg-gray-50"><td className="p-2"><img src={photo.imageUrl} alt={photo.caption} className="w-16 h-12 object-cover rounded" loading="lazy"/></td><td>{photo.caption}</td><td>{photo.category}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('GALLERY', photo)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteGalleryPhoto(photo.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div></div>
-                    <div className="mt-6"><div className="flex justify-between items-center mb-2"><h3 className="text-lg font-semibold">Instagram Feed</h3><button onClick={() => handleOpenModal('INSTAGRAM')} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Add Post</button></div><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Preview</th><th className="p-2 text-left">Type</th><th className="p-2 text-left">Likes</th><th className="p-2 text-left">Comments</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{instagramPosts.map(post => (<tr key={post.id} className="border-b hover:bg-gray-50"><td className="p-2"><img src={post.imageUrl} alt="Instagram Post" className="w-12 h-12 object-cover rounded" loading="lazy"/></td><td>{post.type}</td><td>{post.likes}</td><td>{post.comments}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('INSTAGRAM', post)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteInstagramPost(post.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div></div>
+                    <div className="mt-6"><div className="flex justify-between items-center mb-2"><h3 className="text-lg font-semibold">Gallery Photos</h3><button onClick={() => handleOpenModal('GALLERY')} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Add Photo</button></div><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Preview</th><th className="p-2 text-left">Caption</th><th className="p-2 text-left">Category</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{currentGalleryPhotos.map(photo => (<tr key={photo.id} className="border-b hover:bg-gray-50"><td className="p-2"><img src={photo.imageUrl} alt={photo.caption} className="w-16 h-12 object-cover rounded" loading="lazy"/></td><td>{photo.caption}</td><td>{photo.category}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('GALLERY', photo)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteGalleryPhoto(photo.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <Pagination 
+                        currentPage={galleryCurrentPage}
+                        totalPages={galleryTotalPages}
+                        onPageChange={handleGalleryPageChange}
+                    />
+                    </div>
+                    <div className="mt-6"><div className="flex justify-between items-center mb-2"><h3 className="text-lg font-semibold">Instagram Feed</h3><button onClick={() => handleOpenModal('INSTAGRAM')} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Add Post</button></div><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b"><th className="p-2 text-left">Preview</th><th className="p-2 text-left">Type</th><th className="p-2 text-left">Likes</th><th className="p-2 text-left">Comments</th><th className="p-2 text-right">Actions</th></tr></thead><tbody>{currentInstagramPosts.map(post => (<tr key={post.id} className="border-b hover:bg-gray-50"><td className="p-2"><img src={post.imageUrl} alt="Instagram Post" className="w-12 h-12 object-cover rounded" loading="lazy"/></td><td>{post.type}</td><td>{post.likes}</td><td>{post.comments}</td><td className="p-2 text-right space-x-2"><button onClick={() => handleOpenModal('INSTAGRAM', post)} className="text-blue-600 hover:underline">Edit</button><button onClick={() => props.onDeleteInstagramPost(post.id)} className="text-red-600 hover:underline">Delete</button></td></tr>))}</tbody></table></div>
+                    <Pagination 
+                        currentPage={instagramCurrentPage}
+                        totalPages={instagramTotalPages}
+                        onPageChange={handleInstagramPageChange}
+                    />
+                    </div>
                 </section>
             </main>
             {renderModal()}

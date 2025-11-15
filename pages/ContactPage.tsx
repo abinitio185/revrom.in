@@ -21,15 +21,45 @@ const ContactPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+
+    const validateForm = () => {
+        const newErrors: { name?: string; email?: string; message?: string } = {};
+
+        if (!name.trim()) {
+            newErrors.name = 'Name is required.';
+        }
+
+        if (!email.trim()) {
+            newErrors.email = 'Email is required.';
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Email address is invalid.';
+        }
+
+        if (!message.trim()) {
+            newErrors.message = 'Message is required.';
+        } else if (message.trim().length < 10) {
+            newErrors.message = 'Message must be at least 10 characters long.';
+        }
+
+        return newErrors;
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const formErrors = validateForm();
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            return;
+        }
+
         // In a real app, you'd integrate with an email service
         console.log('Form submitted:', { name, email, message });
         setSubmitted(true);
         setName('');
         setEmail('');
         setMessage('');
+        setErrors({});
     };
 
     return (
@@ -65,15 +95,18 @@ const ContactPage: React.FC = () => {
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
                                     <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
-                                    <input type="text" id="name" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"/>
+                                    <input type="text" id="name" value={name} onChange={e => setName(e.target.value)} required aria-invalid={!!errors.name} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.name ? 'border-red-500' : 'border-slate-300'}`}/>
+                                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                                 </div>
                                 <div>
                                     <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
-                                    <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"/>
+                                    <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required aria-invalid={!!errors.email} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.email ? 'border-red-500' : 'border-slate-300'}`}/>
+                                    {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                                 </div>
                                 <div>
                                     <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-                                    <textarea id="message" value={message} onChange={e => setMessage(e.target.value)} required rows={5} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"></textarea>
+                                    <textarea id="message" value={message} onChange={e => setMessage(e.target.value)} required rows={5} aria-invalid={!!errors.message} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.message ? 'border-red-500' : 'border-slate-300'}`}></textarea>
+                                    {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
                                 </div>
                                 <div>
                                     <button 

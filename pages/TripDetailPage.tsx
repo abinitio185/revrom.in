@@ -1,6 +1,6 @@
-
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { Trip, Review, ItineraryQuery } from '../types';
+import type { Theme } from '../App';
 import { generatePackingList } from '../services/geminiService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import TripRouteMap from '../components/TripRouteMap';
@@ -10,6 +10,7 @@ interface TripDetailPageProps {
   onBookNow: (trip: Trip) => void;
   onBack: () => void;
   onAddQuery: (query: Omit<ItineraryQuery, 'id' | 'date'>) => void;
+  theme: Theme;
 }
 
 const XIcon: React.FC<{className?: string}> = ({ className }) => (
@@ -93,7 +94,7 @@ const StarRating: React.FC<{ rating: number; onRatingChange?: (rating: number) =
                     onMouseLeave={() => isInteractive && setHoverRating(0)}
                     aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                 >
-                    <StarIcon className={`${size} transition-colors ${(hoverRating >= star || rating >= star) ? 'text-yellow-400' : 'text-gray-300'}`} />
+                    <StarIcon className={`${size} transition-colors ${(hoverRating >= star || rating >= star) ? 'text-yellow-400' : 'text-slate-400 dark:text-slate-600'}`} />
                 </button>
             ))}
         </div>
@@ -101,7 +102,7 @@ const StarRating: React.FC<{ rating: number; onRatingChange?: (rating: number) =
 };
 
 
-const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack, onAddQuery }) => {
+const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack, onAddQuery, theme }) => {
   const [packingList, setPackingList] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -144,9 +145,9 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
   }, [currentIndex, trip.gallery.length]);
 
   const difficultyColors = {
-      Intermediate: 'bg-yellow-100 text-yellow-800',
-      Advanced: 'bg-orange-100 text-orange-800',
-      Expert: 'bg-red-100 text-red-800',
+    Intermediate: 'bg-yellow-100 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/50 dark:text-yellow-300 dark:ring-yellow-400/20',
+    Advanced: 'bg-orange-100 text-orange-800 ring-orange-600/20 dark:bg-orange-900/50 dark:text-orange-300 dark:ring-orange-400/20',
+    Expert: 'bg-red-100 text-red-800 ring-red-600/20 dark:bg-red-900/50 dark:text-red-300 dark:ring-red-400/20',
   };
 
   const handleGenerateList = useCallback(async () => {
@@ -187,7 +188,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={i}>{part.slice(2, -2)}</strong>;
+            return <strong key={i} className="text-foreground dark:text-dark-foreground">{part.slice(2, -2)}</strong>;
         }
         return part;
     });
@@ -200,7 +201,7 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
     const flushList = () => {
         if (listItems.length > 0) {
-            elements.push(<ul key={`ul-${elements.length}`} className="list-disc list-inside space-y-2 my-4 pl-4 text-slate-600">{listItems}</ul>);
+            elements.push(<ul key={`ul-${elements.length}`} className="list-disc list-inside space-y-2 my-4 pl-4 text-muted-foreground dark:text-dark-muted-foreground">{listItems}</ul>);
             listItems = [];
         }
     };
@@ -208,15 +209,15 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
     lines.forEach((line, index) => {
         if (line.startsWith('### ')) {
             flushList();
-            elements.push(<h3 key={index} className="text-2xl font-bold font-display mt-6 mb-2 text-slate-800">{renderInlineMarkdown(line.substring(4))}</h3>);
+            elements.push(<h3 key={index} className="text-2xl font-bold font-display mt-6 mb-2 text-foreground dark:text-dark-foreground">{renderInlineMarkdown(line.substring(4))}</h3>);
         } else if (line.startsWith('#### ')) {
             flushList();
-            elements.push(<h4 key={index} className="text-xl font-bold font-display mt-4 mb-2 text-slate-800">{renderInlineMarkdown(line.substring(5))}</h4>);
+            elements.push(<h4 key={index} className="text-xl font-bold font-display mt-4 mb-2 text-brand-accent-gold">{renderInlineMarkdown(line.substring(5))}</h4>);
         } else if (line.startsWith('* ')) {
             listItems.push(<li key={index}>{renderInlineMarkdown(line.substring(2))}</li>);
         } else if (line.trim() !== '') {
             flushList();
-            elements.push(<p key={index} className="text-slate-600 leading-relaxed">{renderInlineMarkdown(line)}</p>);
+            elements.push(<p key={index} className="text-muted-foreground dark:text-dark-muted-foreground leading-relaxed">{renderInlineMarkdown(line)}</p>);
         }
     });
 
@@ -230,10 +231,9 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
 
   return (
-    <div className="bg-white">
+    <div className="bg-background dark:bg-dark-background">
       {/* Hero Gallery */}
       <section className="relative bg-black group">
-          {/* Main Image Viewer */}
           <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
               {trip.gallery.map((imgUrl, index) => (
                   <img
@@ -288,24 +288,24 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Main Content */}
           <div className="md:col-span-3">
-            <h2 className="text-3xl font-bold font-display mb-4">Tour Overview</h2>
-            <div className="mb-8 prose max-w-none text-slate-600">
+            <h2 className="text-3xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">Tour Overview</h2>
+            <div className="mb-8 prose-invert max-w-none">
               {renderMarkdown(trip.longDescription)}
             </div>
 
-            <h2 className="text-3xl font-bold font-display mb-6">Daily Itinerary</h2>
+            <h2 className="text-3xl font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Daily Itinerary</h2>
             <div className="space-y-2">
                 {trip.itinerary.map((item) => (
-                    <div key={item.day} className="border rounded-lg overflow-hidden">
+                    <div key={item.day} className="border border-border dark:border-dark-border rounded-lg overflow-hidden">
                         <button
                             onClick={() => toggleItineraryDay(item.day)}
-                            className="w-full flex justify-between items-center p-4 text-left bg-gray-50 hover:bg-gray-100"
+                            className="w-full flex justify-between items-center p-4 text-left bg-card/50 dark:bg-dark-card/50 hover:bg-black/5 dark:hover:bg-white/5"
                         >
-                            <h3 className="font-semibold text-lg text-slate-800">Day {item.day}: {item.title}</h3>
-                            <ChevronRightIcon className={`w-6 h-6 text-slate-500 transition-transform duration-300 ${activeDay === item.day ? 'rotate-90' : ''}`} />
+                            <h3 className="font-semibold text-lg text-foreground dark:text-dark-foreground">Day {item.day}: {item.title}</h3>
+                            <ChevronRightIcon className={`w-6 h-6 text-muted-foreground dark:text-dark-muted-foreground transition-transform duration-300 ${activeDay === item.day ? 'rotate-90' : ''}`} />
                         </button>
                         <div className={`transition-all duration-500 ease-in-out ${activeDay === item.day ? 'max-h-screen' : 'max-h-0'}`}>
-                            <div className="p-4 border-t text-slate-600">
+                            <div className="p-4 border-t border-border dark:border-dark-border text-muted-foreground dark:text-dark-muted-foreground bg-card dark:bg-dark-card">
                                 {item.description}
                             </div>
                         </div>
@@ -316,64 +316,64 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
             {trip.routeCoordinates && trip.routeCoordinates.length > 1 && (
               <>
-                <h2 className="text-3xl font-bold font-display mt-12 mb-6">Route Map</h2>
+                <h2 className="text-3xl font-bold font-display mt-12 mb-6 text-foreground dark:text-dark-foreground">Route Map</h2>
                 <div className="rounded-lg overflow-hidden shadow-lg">
-                  <TripRouteMap coordinates={trip.routeCoordinates} />
+                  <TripRouteMap coordinates={trip.routeCoordinates} theme={theme} />
                 </div>
               </>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 my-12">
-              <div className="bg-green-50 border-l-4 border-green-400 p-6 rounded-r-lg">
-                <h3 className="text-2xl font-bold font-display mb-4 text-green-800">What's Included</h3>
-                <ul className="space-y-3 text-slate-700">
-                  {trip.inclusions.map(item => <li key={item} className="flex items-start"><CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
+              <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-bold font-display mb-4 text-green-700 dark:text-green-300">What's Included</h3>
+                <ul className="space-y-3 text-muted-foreground dark:text-dark-muted-foreground">
+                  {trip.inclusions.map(item => <li key={item} className="flex items-start"><CheckCircleIcon className="w-6 h-6 text-green-500 dark:text-green-400 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
                 </ul>
               </div>
-              <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-lg">
-                <h3 className="text-2xl font-bold font-display mb-4 text-red-800">What's Not Included</h3>
-                <ul className="space-y-3 text-slate-700">
-                  {trip.exclusions.map(item => <li key={item} className="flex items-start"><XCircleIcon className="w-6 h-6 text-red-500 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
+              <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-6 rounded-r-lg">
+                <h3 className="text-2xl font-bold font-display mb-4 text-red-700 dark:text-red-300">What's Not Included</h3>
+                <ul className="space-y-3 text-muted-foreground dark:text-dark-muted-foreground">
+                  {trip.exclusions.map(item => <li key={item} className="flex items-start"><XCircleIcon className="w-6 h-6 text-red-500 dark:text-red-400 mr-3 shrink-0 mt-0.5" /><span>{item}</span></li>)}
                 </ul>
               </div>
             </div>
 
             {/* Rider Reviews Section */}
             <div className="my-12">
-                <h2 className="text-3xl font-bold font-display mb-6">Rider Reviews</h2>
+                <h2 className="text-3xl font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Rider Reviews</h2>
                 
                 <div className="space-y-6">
                     {sortedReviews.length > 0 ? sortedReviews.map((review, index) => (
-                        <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <div key={index} className="bg-card dark:bg-dark-card p-6 rounded-lg shadow-sm border border-border dark:border-dark-border">
                             <div className="flex items-center justify-between mb-2">
                                 <div>
-                                    <p className="font-bold text-slate-800">{review.name}</p>
-                                    <p className="text-xs text-slate-500">{new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    <p className="font-bold text-foreground dark:text-dark-foreground">{review.name}</p>
+                                    <p className="text-xs text-muted-foreground dark:text-dark-muted-foreground">{new Date(review.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 </div>
                                 <StarRating rating={review.rating} />
                             </div>
-                            <p className="text-slate-600 italic">"{review.comment}"</p>
+                            <p className="text-muted-foreground dark:text-dark-muted-foreground italic">"{review.comment}"</p>
                         </div>
                     )) : (
-                        <p className="text-slate-500">No reviews yet for this tour.</p>
+                        <p className="text-muted-foreground dark:text-dark-muted-foreground">No reviews yet for this tour.</p>
                     )}
                 </div>
             </div>
             
-            <h2 className="text-3xl font-bold font-display mb-4">AI-Powered Moto Packing List</h2>
-            <div className="bg-gray-100 p-6 rounded-lg">
-                <p className="mb-4 text-slate-600">Let our AI assistant generate a personalized packing list for your high-altitude motorcycle adventure!</p>
+            <h2 className="text-3xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">AI-Powered Moto Packing List</h2>
+            <div className="bg-card dark:bg-dark-card p-6 rounded-lg border border-border dark:border-dark-border">
+                <p className="mb-4 text-muted-foreground dark:text-dark-muted-foreground">Let our AI assistant generate a personalized packing list for your high-altitude motorcycle adventure!</p>
                 <button 
                     onClick={handleGenerateList} 
                     disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors disabled:bg-blue-300"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors disabled:bg-blue-400"
                 >
                     {isLoading ? 'Generating...' : 'Generate Packing List'}
                 </button>
                 {isLoading && <LoadingSpinner />}
-                {error && <p className="text-red-500 mt-4">{error}</p>}
+                {error && <p className="text-red-500 dark:text-red-400 mt-4">{error}</p>}
                 {packingList && (
-                    <div className="mt-6 bg-white p-4 rounded shadow-inner prose prose-sm max-w-none">
+                    <div className="mt-6 bg-background dark:bg-dark-background p-4 rounded shadow-inner prose prose-sm max-w-none dark:prose-invert">
                         <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{packingList}</pre>
                     </div>
                 )}
@@ -383,41 +383,41 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
           {/* Sidebar */}
           <aside className="md:col-span-1">
-            <div className="sticky top-16 bg-gray-50 p-6 md:p-8 rounded-lg shadow-md">
-              <p className="text-3xl font-bold text-slate-800">₹{trip.price.toLocaleString('en-IN')}<span className="text-base font-normal text-slate-500">/person</span></p>
+            <div className="sticky top-24 bg-card dark:bg-dark-card p-6 md:p-8 rounded-lg shadow-md border border-border dark:border-dark-border">
+              <p className="text-3xl font-bold text-foreground dark:text-dark-foreground">₹{trip.price.toLocaleString('en-IN')}<span className="text-base font-normal text-muted-foreground dark:text-dark-muted-foreground">/person</span></p>
               <div className="mt-4">
-                  <h4 className="font-semibold mb-2">Difficulty</h4>
-                  <span className={`text-sm font-bold px-3 py-1 rounded-full ${difficultyColors[trip.difficulty]}`}>{trip.difficulty}</span>
+                  <h4 className="font-semibold mb-2 text-muted-foreground dark:text-dark-muted-foreground">Difficulty</h4>
+                  <span className={`text-sm font-bold px-3 py-1 rounded-full ring-1 ring-inset ${difficultyColors[trip.difficulty]}`}>{trip.difficulty}</span>
               </div>
-              <button onClick={() => onBookNow(trip)} className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg text-lg transition-transform transform hover:scale-105">
+              <button onClick={() => onBookNow(trip)} className="mt-6 w-full bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 rounded-lg text-lg transition-transform transform hover:scale-105">
                 Book This Tour
               </button>
-              <button onClick={() => setIsQueryModalOpen(true)} className="mt-3 w-full flex items-center justify-center gap-2 border-2 border-orange-500 text-orange-500 font-bold py-2.5 rounded-lg text-md transition-all hover:bg-orange-500 hover:text-white">
+              <button onClick={() => setIsQueryModalOpen(true)} className="mt-3 w-full flex items-center justify-center gap-2 border-2 border-brand-primary text-brand-primary font-bold py-2.5 rounded-lg text-md transition-all hover:bg-brand-primary hover:text-white">
                 <DownloadIcon className="w-5 h-5"/>
                 <span>Download Itinerary</span>
               </button>
               <div className="mt-8">
-                <h4 className="font-semibold mb-2">Activities</h4>
+                <h4 className="font-semibold mb-2 text-muted-foreground dark:text-dark-muted-foreground">Activities</h4>
                 <div className="flex flex-wrap gap-2">
                   {trip.activities.map(activity => (
-                    <span key={activity} className="bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-1.5 rounded-full capitalize">{activity}</span>
+                    <span key={activity} className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-medium px-2.5 py-1.5 rounded-full capitalize">{activity}</span>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                  <h4 className="font-semibold mb-3 text-slate-700">Share This Adventure</h4>
-                  <div className="flex justify-center items-center gap-4">
-                      <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" className="text-gray-500 hover:text-green-500 transition-colors">
+              <div className="mt-8 pt-6 border-t border-border dark:border-dark-border text-center">
+                  <h4 className="font-semibold mb-3 text-muted-foreground dark:text-dark-muted-foreground">Share This Adventure</h4>
+                  <div className="flex justify-center items-center gap-4 text-muted-foreground dark:text-dark-muted-foreground">
+                      <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" className="hover:text-green-500 transition-colors">
                           <WhatsAppIcon className="w-7 h-7" />
                       </a>
-                      <a href={facebookShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" className="text-gray-500 hover:text-blue-600 transition-colors">
+                      <a href={facebookShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" className="hover:text-blue-500 transition-colors">
                           <FacebookIcon className="w-7 h-7" />
                       </a>
-                      <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter" className="text-gray-500 hover:text-sky-500 transition-colors">
+                      <a href={twitterShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter" className="hover:text-sky-400 transition-colors">
                           <TwitterIcon className="w-7 h-7" />
                       </a>
-                      <a href={instagramShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Instagram" className="text-gray-500 hover:text-pink-500 transition-colors">
+                      <a href={instagramShareUrl} target="_blank" rel="noopener noreferrer" aria-label="Share on Instagram" className="hover:text-pink-500 transition-colors">
                           <InstagramIcon className="w-7 h-7" />
                       </a>
                   </div>
@@ -430,39 +430,39 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
       {isQueryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsQueryModalOpen(false)}>
-            <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full mx-4 relative transform transition-all" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setIsQueryModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" aria-label="Close modal"><XIcon className="w-6 h-6" /></button>
+            <div className="bg-card dark:bg-dark-card p-8 rounded-lg shadow-xl max-w-lg w-full mx-4 relative transform transition-all border border-border dark:border-dark-border" onClick={e => e.stopPropagation()}>
+                <button onClick={() => setIsQueryModalOpen(false)} className="absolute top-4 right-4 text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground" aria-label="Close modal"><XIcon className="w-6 h-6" /></button>
                 
                 {querySubmitted ? (
                     <div className="text-center py-8">
                         <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                        <h3 className="text-2xl font-bold font-display text-slate-800">Thank You!</h3>
-                        <p className="text-slate-600 mt-2">Your inquiry has been sent. An admin will contact you on WhatsApp shortly. You can now download the itinerary.</p>
-                        <a href="#" onClick={(e) => { e.preventDefault(); alert("Actual PDF download would start here!"); }} className="mt-6 inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md">Download Now</a>
+                        <h3 className="text-2xl font-bold font-display text-foreground dark:text-dark-foreground">Thank You!</h3>
+                        <p className="text-muted-foreground dark:text-dark-muted-foreground mt-2">Your inquiry has been sent. An admin will contact you on WhatsApp shortly. You can now download the itinerary.</p>
+                        <a href="#" onClick={(e) => { e.preventDefault(); alert("Actual PDF download would start here!"); }} className="mt-6 inline-block bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-8 rounded-md">Download Now</a>
                     </div>
                 ) : (
                     <>
-                        <h3 className="text-2xl font-bold font-display text-slate-800 mb-2">Get The Full Itinerary</h3>
-                        <p className="text-slate-600 mb-6">Just enter your details below and we'll connect with you on WhatsApp to share the detailed PDF itinerary.</p>
+                        <h3 className="text-2xl font-bold font-display text-foreground dark:text-dark-foreground mb-2">Get The Full Itinerary</h3>
+                        <p className="text-muted-foreground dark:text-dark-muted-foreground mb-6">Just enter your details below and we'll connect with you on WhatsApp to share the detailed PDF itinerary.</p>
                         <form onSubmit={handleQuerySubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
-                                <input type="text" name="name" id="name" value={queryForm.name} onChange={handleQueryFormChange} required className="mt-1 w-full p-2 border rounded border-gray-300 focus:ring-orange-500 focus:border-orange-500"/>
+                                <label htmlFor="name" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Full Name</label>
+                                <input type="text" name="name" id="name" value={queryForm.name} onChange={handleQueryFormChange} required className="mt-1 w-full p-2 border rounded bg-background dark:bg-dark-background border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary text-foreground dark:text-dark-foreground"/>
                             </div>
                             <div>
-                                <label htmlFor="whatsappNumber" className="block text-sm font-medium text-slate-700">WhatsApp Number</label>
-                                <input type="tel" name="whatsappNumber" id="whatsappNumber" value={queryForm.whatsappNumber} onChange={handleQueryFormChange} required placeholder="+91 98765 43210" className="mt-1 w-full p-2 border rounded border-gray-300 focus:ring-orange-500 focus:border-orange-500"/>
+                                <label htmlFor="whatsappNumber" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">WhatsApp Number</label>
+                                <input type="tel" name="whatsappNumber" id="whatsappNumber" value={queryForm.whatsappNumber} onChange={handleQueryFormChange} required placeholder="+91 98765 43210" className="mt-1 w-full p-2 border rounded bg-background dark:bg-dark-background border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary text-foreground dark:text-dark-foreground"/>
                             </div>
                             <div>
-                                <label htmlFor="planningTime" className="block text-sm font-medium text-slate-700">When are you planning to travel?</label>
-                                <select name="planningTime" id="planningTime" value={queryForm.planningTime} onChange={handleQueryFormChange} className="mt-1 w-full p-2 border rounded border-gray-300 bg-white focus:ring-orange-500 focus:border-orange-500">
+                                <label htmlFor="planningTime" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">When are you planning to travel?</label>
+                                <select name="planningTime" id="planningTime" value={queryForm.planningTime} onChange={handleQueryFormChange} className="mt-1 w-full p-2 border rounded border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-brand-primary focus:border-brand-primary">
                                     <option>1-3 Months</option>
                                     <option>3-6 Months</option>
                                     <option>6+ Months</option>
                                     <option>Just Researching</option>
                                 </select>
                             </div>
-                            <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-md transition-colors">Submit & Get Itinerary</button>
+                            <button type="submit" className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-4 rounded-md transition-colors">Submit & Get Itinerary</button>
                         </form>
                     </>
                 )}

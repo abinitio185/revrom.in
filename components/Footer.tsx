@@ -29,7 +29,6 @@ const YouTubeIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
-// Fix: Completed the Footer component which was truncated and did not export a default component.
 const Footer: React.FC<FooterProps> = ({
   onNavigateHome,
   onNavigateContact,
@@ -40,62 +39,62 @@ const Footer: React.FC<FooterProps> = ({
   siteContent,
 }) => {
   return (
-    <footer className="bg-slate-800 text-slate-300">
+    <footer className="bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-t border-border dark:border-dark-border">
       <div className="container mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           <div className="col-span-2 lg:col-span-2">
-            <h3 className="text-lg font-semibold text-white mb-4">Revrom.in</h3>
-            <p className="text-sm">
+            <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto mb-4" />
+            <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground">
               Unforgettable Motorcycle Adventures in the Heart of the Himalayas.
             </p>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-4">Quick Links</h4>
+            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="hover:text-orange-400 transition-colors">Home</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Home</a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="hover:text-orange-400 transition-colors">Blog</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Blog</a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="hover:text-orange-400 transition-colors">Gallery</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Gallery</a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="hover:text-orange-400 transition-colors">Contact</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Contact</a>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-4">Adventures</h4>
+            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Adventures</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="hover:text-orange-400 transition-colors">All Tours</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">All Tours</a>
               </li>
               <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="hover:text-orange-400 transition-colors">Customize Tour</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Customize Tour</a>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-white mb-4">Connect</h4>
-            <div className="flex space-x-4">
-              <a href="#" aria-label="Facebook" className="hover:text-orange-400 transition-colors">
+            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Connect</h4>
+            <div className="flex space-x-4 text-muted-foreground dark:text-dark-muted-foreground">
+              <a href="#" aria-label="Facebook" className="hover:text-brand-primary transition-colors">
                 <FacebookIcon className="w-6 h-6" />
               </a>
-              <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-orange-400 transition-colors">
+              <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-brand-primary transition-colors">
                 <InstagramIcon className="w-6 h-6" />
               </a>
-              <a href="#" aria-label="YouTube" className="hover:text-orange-400 transition-colors">
+              <a href="#" aria-label="YouTube" className="hover:text-brand-primary transition-colors">
                 <YouTubeIcon className="w-6 h-6" />
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-slate-700 text-center text-sm">
+        <div className="mt-8 pt-8 border-t border-border dark:border-dark-border text-center text-sm text-muted-foreground dark:text-dark-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Revrom.in. All rights reserved.</p>
           <p className="mt-1">
-            <a href="#" onClick={(e) => { e.preventDefault(); onNavigateAdmin(); }} className="hover:text-orange-400 transition-colors">
+            <a href="#" onClick={(e) => { e.preventDefault(); onNavigateAdmin(); }} className="hover:text-brand-primary transition-colors">
               Admin Login
             </a>
           </p>

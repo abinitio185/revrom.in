@@ -21,23 +21,23 @@ const UserIcon: React.FC<{className?: string}> = ({ className }) => (
 const BlogPostCard: React.FC<BlogPostCardProps> = ({ post, onSelectPost }) => {
   return (
     <div 
-      className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer group flex flex-col"
+      className="bg-card dark:bg-dark-card rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer group flex flex-col border border-border dark:border-dark-border hover:border-brand-primary"
       onClick={() => onSelectPost(post)}
     >
       <div className="relative">
         <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" loading="lazy" />
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <div className="flex items-center text-xs text-slate-500 mb-3">
-          <UserIcon className="w-4 h-4 mr-1 text-orange-400" />
+        <div className="flex items-center text-xs text-muted-foreground dark:text-dark-muted-foreground mb-3">
+          <UserIcon className="w-4 h-4 mr-1 text-brand-accent-gold" />
           <span>{post.author}</span>
           <span className="mx-2">|</span>
-          <CalendarIcon className="w-4 h-4 mr-1 text-orange-400" />
+          <CalendarIcon className="w-4 h-4 mr-1 text-brand-accent-gold" />
           <span>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
         </div>
-        <h3 className="text-xl font-bold font-display mb-2 text-slate-800 group-hover:text-orange-600 transition-colors flex-grow">{post.title}</h3>
-        <p className="text-slate-600 text-sm mb-4">{post.excerpt}</p>
-        <button className="mt-auto text-orange-600 font-semibold text-sm self-start group-hover:underline">
+        <h3 className="text-xl font-bold font-display mb-2 text-foreground dark:text-dark-foreground group-hover:text-brand-primary transition-colors flex-grow">{post.title}</h3>
+        <p className="text-muted-foreground dark:text-dark-muted-foreground text-sm mb-4">{post.excerpt}</p>
+        <button className="mt-auto text-brand-primary font-semibold text-sm self-start group-hover:underline">
           Read More &rarr;
         </button>
       </div>

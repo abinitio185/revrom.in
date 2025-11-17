@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import type { GalleryPhoto } from '../types';
 
@@ -18,7 +17,7 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ photos }) => {
   }, [activeFilter, photos]);
 
   return (
-    <div className="bg-white">
+    <div className="bg-background dark:bg-dark-background">
       <div className="relative h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-gallery-hero/1920/1080')" }}>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-center relative z-10">
@@ -34,8 +33,8 @@ const GalleryPage: React.FC<GalleryPageProps> = ({ photos }) => {
               onClick={() => setActiveFilter(category)}
               className={`px-4 py-2 text-sm md:text-base font-semibold rounded-full transition-colors duration-300 ${
                 activeFilter === category
-                  ? 'bg-orange-500 text-white shadow-md'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-brand-primary text-white shadow-md'
+                  : 'bg-card dark:bg-dark-card text-foreground dark:text-dark-foreground hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {category}

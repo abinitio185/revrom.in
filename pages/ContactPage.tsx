@@ -1,11 +1,21 @@
-
 import React, { useState } from 'react';
 
 const MailIcon: React.FC<{className?: string}> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M1.5 4.5a3 3 0 0 1 3-3h15a3 3 0 0 1 3 3v15a3 3 0 0 1-3-3h-15a3 3 0 0 1-3-3v-15Z" />
-        <path fill="#fff" d="M12 14.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" />
-        <path fill="#fff" fillRule="evenodd" d="M12 21a9 9 0 0 0 8.368-5.555 1.5 1.5 0 0 0-2.6-1.482A6 6 0 0 1 12 16.5a6 6 0 0 1-5.768-3.537 1.5 1.5 0 0 0-2.6 1.482A9 9 0 0 0 12 21Z" clipRule="evenodd" />
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+    </svg>
+);
+
+const PhoneIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 6.75z" />
+    </svg>
+);
+
+const LocationIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
     </svg>
 );
 
@@ -63,7 +73,7 @@ const ContactPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-white">
+        <div className="bg-background dark:bg-dark-background">
             <div className="relative h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-contact/1920/1080')" }}>
                 <div className="absolute inset-0 bg-black/50"></div>
                 <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-center relative z-10">
@@ -74,18 +84,18 @@ const ContactPage: React.FC = () => {
             <div className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div className="md:col-span-2">
-                        <h2 className="text-3xl font-bold font-display mb-2">Send Us a Message</h2>
-                        <p className="text-slate-600 mb-8">Have a question or need more information? Drop us a line!</p>
+                        <h2 className="text-3xl font-bold font-display mb-2 text-foreground dark:text-dark-foreground">Send Us a Message</h2>
+                        <p className="text-muted-foreground dark:text-dark-muted-foreground mb-8">Have a question or need more information? Drop us a line!</p>
                         
                         {submitted ? (
-                            <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-md shadow-md">
+                            <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-md shadow-md">
                                 <div className="flex">
                                     <div className="flex-shrink-0">
-                                        <CheckCircleIcon className="h-6 w-6 text-green-400" />
+                                        <CheckCircleIcon className="h-6 w-6 text-green-500 dark:text-green-400" />
                                     </div>
                                     <div className="ml-3">
-                                        <h3 className="text-lg font-medium text-green-800">Message Sent!</h3>
-                                        <div className="mt-2 text-sm text-green-700">
+                                        <h3 className="text-lg font-medium text-green-800 dark:text-green-200">Message Sent!</h3>
+                                        <div className="mt-2 text-sm text-green-700 dark:text-green-300">
                                             <p>Thank you for reaching out. We'll get back to you as soon as possible.</p>
                                         </div>
                                     </div>
@@ -94,24 +104,24 @@ const ContactPage: React.FC = () => {
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-slate-700">Full Name</label>
-                                    <input type="text" id="name" value={name} onChange={e => setName(e.target.value)} required aria-invalid={!!errors.name} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.name ? 'border-red-500' : 'border-slate-300'}`}/>
-                                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                                    <label htmlFor="name" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Full Name</label>
+                                    <input type="text" id="name" value={name} onChange={e => setName(e.target.value)} required aria-invalid={!!errors.name} className={`mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-card border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.name ? 'border-red-500' : 'border-border dark:border-dark-border'}`}/>
+                                    {errors.name && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.name}</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email Address</label>
-                                    <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required aria-invalid={!!errors.email} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.email ? 'border-red-500' : 'border-slate-300'}`}/>
-                                    {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                                    <label htmlFor="email" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Email Address</label>
+                                    <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required aria-invalid={!!errors.email} className={`mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-card border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.email ? 'border-red-500' : 'border-border dark:border-dark-border'}`}/>
+                                    {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="message" className="block text-sm font-medium text-slate-700">Message</label>
-                                    <textarea id="message" value={message} onChange={e => setMessage(e.target.value)} required rows={5} aria-invalid={!!errors.message} className={`mt-1 block w-full px-3 py-2 bg-white border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm ${errors.message ? 'border-red-500' : 'border-slate-300'}`}></textarea>
-                                    {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message}</p>}
+                                    <label htmlFor="message" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Message</label>
+                                    <textarea id="message" value={message} onChange={e => setMessage(e.target.value)} required rows={5} aria-invalid={!!errors.message} className={`mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-card border rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.message ? 'border-red-500' : 'border-border dark:border-dark-border'}`}></textarea>
+                                    {errors.message && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.message}</p>}
                                 </div>
                                 <div>
                                     <button 
                                         type="submit" 
-                                        className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg"
+                                        className="w-full sm:w-auto bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg"
                                     >
                                         Send Message
                                     </button>
@@ -121,27 +131,27 @@ const ContactPage: React.FC = () => {
                     </div>
                     
                     <aside className="md:col-span-1">
-                         <div className="bg-gray-50 p-8 rounded-lg shadow-md">
-                            <h3 className="text-2xl font-bold font-display mb-4">Contact Information</h3>
-                            <ul className="space-y-4 text-slate-600">
+                         <div className="bg-card dark:bg-dark-card p-8 rounded-lg shadow-md border border-border dark:border-dark-border">
+                            <h3 className="text-2xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">Contact Information</h3>
+                            <ul className="space-y-4 text-muted-foreground dark:text-dark-muted-foreground">
                                 <li className="flex items-start">
-                                    <MailIcon className="w-6 h-6 text-orange-500 mr-3 mt-1 shrink-0" />
+                                    <MailIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
-                                        <h4 className="font-semibold text-slate-800">Email</h4>
-                                        <a href="mailto:contact@revrom.in" className="hover:text-orange-600">contact@revrom.in</a>
+                                        <h4 className="font-semibold text-foreground dark:text-dark-foreground">Email</h4>
+                                        <a href="mailto:contact@revrom.in" className="hover:text-brand-primary-dark">contact@revrom.in</a>
                                     </div>
                                 </li>
                                  <li className="flex items-start">
-                                    <MailIcon className="w-6 h-6 text-orange-500 mr-3 mt-1 shrink-0" />
+                                    <PhoneIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
-                                        <h4 className="font-semibold text-slate-800">Phone</h4>
+                                        <h4 className="font-semibold text-foreground dark:text-dark-foreground">Phone</h4>
                                         <span>+91 987 654 3210</span>
                                     </div>
                                 </li>
                                  <li className="flex items-start">
-                                    <MailIcon className="w-6 h-6 text-orange-500 mr-3 mt-1 shrink-0" />
+                                    <LocationIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
-                                        <h4 className="font-semibold text-slate-800">Address</h4>
+                                        <h4 className="font-semibold text-foreground dark:text-dark-foreground">Address</h4>
                                         <p>Fort Road, Leh, Ladakh, 194101, India</p>
                                     </div>
                                 </li>

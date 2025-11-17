@@ -377,5 +377,5 @@ export const siteContent: SiteContent = {
     instagramUrl: "https://www.instagram.com/revrom.in",
     googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Google&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4",
     adminWhatsappNumber: "919876543210",
-    logoUrl: "",
+    logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAABFCAMAAAC3zTykAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURf///87Ozv///83NzbS0tAC53v4AAAMESURBVGFjYIAEAAAA//8AIAABAAAAAADgIQNuAACBlAX+iIAnAAAAAElFTkSuQmCC",
 };

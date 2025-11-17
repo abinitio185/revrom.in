@@ -31,8 +31,9 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     destinations,
     onClearFilters,
 }) => {
+    const inputClass = "w-full p-3 border border-border dark:border-dark-border rounded-md focus:ring-brand-primary focus:border-brand-primary bg-card dark:bg-dark-card text-foreground dark:text-dark-foreground";
     return (
-        <div className="bg-white p-6 rounded-lg shadow-lg space-y-4 md:space-y-0">
+        <div className="bg-card dark:bg-dark-card p-6 rounded-lg shadow-lg space-y-4 md:space-y-0 border border-border dark:border-dark-border">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
                 {/* Search Bar */}
                 <div className="relative md:col-span-2 lg:col-span-2">
@@ -43,7 +44,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search by name, destination..."
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full pl-10 pr-4 py-3 border border-border dark:border-dark-border rounded-md focus:ring-brand-primary focus:border-brand-primary bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground"
                     />
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>
@@ -55,7 +56,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         id="destination"
                         value={destinationFilter}
                         onChange={(e) => setDestinationFilter(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                        className={inputClass}
                     >
                         <option value="all">All Destinations</option>
                         {destinations.map(dest => (
@@ -71,7 +72,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         id="duration"
                         value={durationFilter}
                         onChange={(e) => setDurationFilter(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                        className={inputClass}
                     >
                         <option value="all">All Durations</option>
                         <option value="1-7">Up to 7 Days</option>
@@ -87,7 +88,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                         id="difficulty"
                         value={difficultyFilter}
                         onChange={(e) => setDifficultyFilter(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+                        className={inputClass}
                     >
                         <option value="all">All Difficulties</option>
                         <option value="Intermediate">Intermediate</option>
@@ -99,7 +100,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
              <div className="flex justify-end pt-2">
                 <button
                     onClick={onClearFilters}
-                    className="text-sm font-semibold text-orange-600 hover:text-orange-800 transition-colors"
+                    className="text-sm font-semibold text-brand-primary hover:text-brand-primary-dark transition-colors"
                 >
                     Clear Filters
                 </button>

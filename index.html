@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Revrom.in | Ride. Roam. Relax.</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                primary: '#DD6B20',       // Vibrant Orange
+                'primary-dark': '#B45309',    // Darker Orange for hover
+                'accent-gold': '#D69E2E', // Gold accent
+              },
+              // Light Theme Colors
+              background: '#FFFFFF',
+              foreground: '#111827',
+              card: '#F9FAFB',
+              'muted-foreground': '#4B5563',
+              border: '#E5E7EB',
+              // Dark Theme Colors
+              'dark-background': '#1A202C',
+              'dark-foreground': '#E2E8F0',
+              'dark-card': '#2D3748',
+              'dark-muted-foreground': '#94A3B8',
+              'dark-border': '#475569',
+            },
+            fontFamily: {
+              sans: ['Poppins', 'sans-serif'],
+              display: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">

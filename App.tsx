@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, Review, GoogleReview, SiteContent, ItineraryQuery } from './types';
 import { trips as initialTrips, departures as initialDepartures, blogPosts as initialBlogPosts, galleryPhotos as initialGalleryPhotos, instagramPosts as initialInstagramPosts, googleReviews as initialGoogleReviews, siteContent as initialSiteContent, itineraryQueries as initialItineraryQueries } from './data/mockData';
 import { generateBlogImage } from './services/geminiService';
@@ -16,6 +16,7 @@ import GalleryPage from './pages/GalleryPage';
 import CustomizePage from './pages/CustomizePage';
 
 type View = 'home' | 'tripDetail' | 'booking' | 'contact' | 'admin' | 'login' | 'blog' | 'blogDetail' | 'gallery' | 'customize';
+export type Theme = 'light' | 'dark';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
@@ -23,7 +24,27 @@ const App: React.FC = () => {
   const [selectedBlogPost, setSelectedBlogPost] = useState<BlogPost | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [initialDestinationFilter, setInitialDestinationFilter] = useState<string | null>(null);
+  const [theme, setTheme] = useState<Theme>('light');
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme);
+  }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
 
   // Data states
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
@@ -191,7 +212,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (view) {
       case 'tripDetail':
-        return selectedTrip && <TripDetailPage trip={selectedTrip} onBookNow={() => handleNavigate('booking')} onBack={handleNavigateHome} onAddQuery={addItineraryQuery} />;
+        return selectedTrip && <TripDetailPage trip={selectedTrip} onBookNow={() => handleNavigate('booking')} onBack={handleNavigateHome} onAddQuery={addItineraryQuery} theme={theme} />;
       case 'booking':
         return selectedTrip && <BookingPage trip={selectedTrip} onBack={handleBackToDetail} />;
       case 'contact':
@@ -237,6 +258,7 @@ const App: React.FC = () => {
                     onDeleteGoogleReview={deleteGoogleReview}
                     onUpdateSiteContent={updateSiteContent}
                     onLogout={handleLogout}
+                    theme={theme}
                 />;
       case 'home':
       default:
@@ -260,7 +282,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 text-slate-800 min-h-screen flex flex-col overflow-x-hidden">
+    <div className="bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground min-h-screen flex flex-col overflow-x-hidden">
       <Header 
         onNavigateHome={handleNavigateHome} 
         onNavigateContact={handleNavigateContact} 
@@ -270,6 +292,8 @@ const App: React.FC = () => {
         onNavigateToTours={handleNavigateToTours}
         destinations={uniqueDestinations}
         siteContent={siteContent}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
       <main className="flex-grow">
         {renderContent()}

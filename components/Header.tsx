@@ -1,7 +1,7 @@
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import type { SiteContent } from '../types';
+import type { Theme } from '../App';
+import ThemeToggle from './ThemeToggle';
 
 interface HeaderProps {
   onNavigateHome: () => void;
@@ -12,22 +12,9 @@ interface HeaderProps {
   onNavigateToTours: (destination: string | null) => void;
   destinations: string[];
   siteContent: SiteContent;
+  theme: Theme;
+  toggleTheme: () => void;
 }
-
-const RevromLogo = ({ className }: { className?: string }) => (
-    <div className={`flex items-center space-x-3 ${className}`}>
-        <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-orange-500">
-            <g>
-                <path d="M43.06 14.44C41.1 10.66 37.8 7.36 34.02 5.4C33.2 5 32.32 5.3 31.9 6.12L28.12 13.66C27.7 14.48 28 15.36 28.82 15.78C32.02 17.54 34.46 20.48 35.54 24H25V26H35.54C34.46 29.52 32.02 32.46 28.82 34.22C28 34.64 27.7 35.52 28.12 36.34L31.9 43.88C32.32 44.7 33.2 45 34.02 44.6C37.8 42.64 41.1 39.34 43.06 35.56C44.96 31.84 45.94 27.54 45.94 23C45.94 22.5 45.94 23.5 45.94 23C45.94 18.46 44.96 18.16 43.06 14.44Z" fill="currentColor"/>
-                <path d="M6.94 35.56C8.9 39.34 12.2 42.64 15.98 44.6C16.8 45 17.68 44.7 18.1 43.88L21.88 36.34C22.3 35.52 22 34.64 21.18 34.22C17.98 32.46 15.54 29.52 14.46 26H25V24H14.46C15.54 20.48 17.98 17.54 21.18 15.78C22 15.36 22.3 14.48 21.88 13.66L18.1 6.12C17.68 5.3 16.8 5 15.98 5.4C12.2 7.36 8.9 10.66 6.94 14.44C5.04 18.16 4.06 22.5 4.06 23C4.06 27.46 5.04 31.84 6.94 35.56Z" fill="currentColor"/>
-            </g>
-        </svg>
-        <div className="flex flex-col">
-            <span className="text-2xl sm:text-3xl font-black tracking-tighter text-orange-500" style={{fontFamily: "'Poppins', sans-serif", letterSpacing: '-0.05em'}}>REVROM.IN</span>
-            <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.2em] sm:tracking-[0.3em] text-orange-500/80 -mt-1 sm:-mt-0.5" style={{fontFamily: "'Poppins', sans-serif"}}>RIDE.ROAM.RELAX</span>
-        </div>
-    </div>
-);
 
 const ChevronDownIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
@@ -47,7 +34,22 @@ const XIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery, onNavigateCustomize, onNavigateToTours, destinations, siteContent }) => {
+const CompassIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3.75a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 3.75zM12 18a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 18zM18.364 5.636a.75.75 0 011.06 0l1.06 1.06a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 010-1.06zM5.636 18.364a.75.75 0 011.06 0l1.06 1.06a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 010-1.06zM21 12a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0121 12zM4.5 12a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 014.5 12zM18.364 18.364a.75.75 0 010-1.06l-1.06-1.06a.75.75 0 01-1.06 1.06l1.06 1.06a.75.75 0 011.06 0zM5.636 5.636a.75.75 0 010-1.06l-1.06-1.06a.75.75 0 01-1.06 1.06l1.06 1.06a.75.75 0 011.06 0z" />
+    </svg>
+);
+
+const MapPinIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+    </svg>
+);
+
+
+const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery, onNavigateCustomize, onNavigateToTours, destinations, siteContent, theme, toggleTheme }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -79,24 +81,24 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="bg-white/80 backdrop-blur-lg shadow-md sticky top-0 z-50">
+    <header className="bg-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border dark:border-dark-border">
       <nav className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer">
           {siteContent.logoUrl ? (
               <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
           ) : (
-              <RevromLogo />
+              <div className="text-foreground dark:text-dark-foreground">Fallback Logo</div>
           )}
         </button>
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Home</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Home</a>
           
           <div className="relative" ref={dropdownRef}>
               <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   onMouseEnter={() => setIsDropdownOpen(true)}
-                  className="flex items-center text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium"
+                  className="flex items-center text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium"
               >
                   Destinations
                   <ChevronDownIcon className={`w-5 h-5 ml-1 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -104,33 +106,59 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
               {isDropdownOpen && (
                   <div 
                     onMouseLeave={() => setIsDropdownOpen(false)}
-                    className="absolute top-full mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50"
+                    className="absolute top-full mt-2 w-screen max-w-lg bg-card dark:bg-dark-card rounded-lg shadow-2xl z-50 transform -translate-x-1/2 left-1/2 border border-border dark:border-dark-border"
                   >
-                      <a href="#" onClick={(e) => { e.preventDefault(); onNavigateToTours(null); setIsDropdownOpen(false); }} className="block px-4 py-2 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600">All Tours</a>
-                      {destinations.map(dest => (
-                         <a key={dest} href="#" onClick={(e) => { e.preventDefault(); onNavigateToTours(dest); setIsDropdownOpen(false); }} className="block px-4 py-2 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600">{dest}</a>
-                      ))}
+                      <div className="grid grid-cols-2 gap-4 p-6">
+                        <div>
+                          <h3 className="font-bold text-muted-foreground dark:text-dark-muted-foreground uppercase tracking-wider text-sm mb-4">Explore by Destination</h3>
+                          <ul className="space-y-2">
+                            <li>
+                              <a href="#" onClick={(e) => { e.preventDefault(); onNavigateToTours(null); setIsDropdownOpen(false); }} className="flex items-center gap-3 p-2 -m-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+                                <CompassIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
+                                <span className="font-semibold text-foreground dark:text-dark-foreground">All Tours</span>
+                              </a>
+                            </li>
+                            {destinations.map(dest => (
+                              <li key={dest}>
+                                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateToTours(dest); setIsDropdownOpen(false); }} className="flex items-center gap-3 p-2 -m-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+                                  <MapPinIcon className="w-6 h-6 text-brand-accent-gold flex-shrink-0" />
+                                  <span className="font-medium text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary-dark">{dest}</span>
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-background dark:bg-dark-background rounded-lg p-6 flex flex-col justify-center">
+                          <h4 className="font-bold text-brand-primary text-lg">Can't Find Your Perfect Ride?</h4>
+                          <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground mt-2 mb-4">Let us craft a bespoke Himalayan adventure just for you.</p>
+                          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); setIsDropdownOpen(false); }} className="font-semibold text-brand-primary-dark hover:underline">
+                            Customize Your Tour &rarr;
+                          </a>
+                        </div>
+                      </div>
                   </div>
               )}
           </div>
 
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Customize Tour</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Gallery</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Blog</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-slate-600 hover:text-orange-500 transition-colors duration-300 font-medium">Contact</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Customize Tour</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Gallery</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Blog</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Contact</a>
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-4">
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
             <button onClick={() => setIsMobileMenuOpen(true)} aria-label="Open menu" aria-controls="mobile-menu" aria-expanded={isMobileMenuOpen}>
-                <MenuIcon className="w-6 h-6 text-slate-600" />
+                <MenuIcon className="w-6 h-6 text-foreground dark:text-dark-foreground" />
             </button>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-200 ease-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="mobile-menu-title"
@@ -145,27 +173,27 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
           ></div>
 
           {/* Menu Panel */}
-          <div className={`relative flex flex-col w-4/5 max-w-xs ml-auto h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-              <div className="flex justify-between items-center p-4 border-b">
+          <div className={`relative flex flex-col w-4/5 max-w-xs ml-auto h-full bg-card dark:bg-dark-card shadow-xl transform transition-transform duration-300 ease-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className="flex justify-between items-center p-4 border-b border-border dark:border-dark-border">
                   <h2 id="mobile-menu-title" className="sr-only">Main Menu</h2>
                   <button onClick={() => handleMobileNavClick(onNavigateHome)}>
                      {siteContent.logoUrl ? (
                         <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
                      ) : (
-                        <RevromLogo />
+                        <div className="text-foreground dark:text-dark-foreground">Fallback Logo</div>
                      )}
                   </button>
                   <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close menu">
-                      <XIcon className="w-6 h-6 text-slate-600" />
+                      <XIcon className="w-6 h-6 text-foreground dark:text-dark-foreground" />
                   </button>
               </div>
               <div className="flex flex-col space-y-6 p-6">
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateHome); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Home</a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateToTours, null); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">All Tours</a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomize); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Customize Tour</a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateGallery); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Gallery</a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateBlog); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Blog</a>
-                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateContact); }} className="text-slate-600 hover:text-orange-500 text-lg font-medium">Contact</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateHome); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Home</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateToTours, null); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">All Tours</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomize); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Customize Tour</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateGallery); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Gallery</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateBlog); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Blog</a>
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateContact); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Contact</a>
               </div>
           </div>
       </div>

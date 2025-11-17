@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { BlogPost } from '../types';
 import BlogPostCard from '../components/BlogPostCard';
@@ -10,7 +9,7 @@ interface BlogPageProps {
 
 const BlogPage: React.FC<BlogPageProps> = ({ posts, onSelectPost }) => {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-background dark:bg-dark-background">
       <div className="relative h-64 bg-cover bg-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-blog-hero/1920/1080')" }}>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-4 sm:px-6 h-full flex items-center justify-center relative z-10">

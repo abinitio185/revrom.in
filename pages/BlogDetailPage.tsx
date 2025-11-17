@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { BlogPost } from '../types';
 
@@ -21,7 +20,7 @@ const UserIcon: React.FC<{className?: string}> = ({ className }) => (
 
 const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ post, onBack }) => {
   return (
-    <div className="bg-white">
+    <div className="bg-background dark:bg-dark-background">
       <div className="relative h-72 sm:h-96 bg-cover bg-center" style={{ backgroundImage: `url(${post.imageUrl})` }}>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-4 sm:px-6 h-full flex flex-col justify-end pb-8 md:pb-12 relative z-10">
@@ -42,10 +41,10 @@ const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ post, onBack }) => {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 py-12 md:py-16 max-w-4xl">
-         <div className="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+         <div className="prose lg:prose-xl max-w-none prose-slate dark:prose-invert text-muted-foreground dark:text-dark-muted-foreground leading-relaxed">
             {post.content.split('\n\n').map((paragraph, index) => {
               if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                return <h3 key={index} className="text-2xl font-bold font-display mt-8 mb-4">{paragraph.replace(/\*\*/g, '')}</h3>;
+                return <h3 key={index} className="text-2xl font-bold font-display mt-8 mb-4 text-foreground dark:text-dark-foreground">{paragraph.replace(/\*\*/g, '')}</h3>;
               }
               return <p key={index} className="mb-4">{paragraph}</p>;
             })}

@@ -1,6 +1,8 @@
+
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, Review, GoogleReview, SiteContent, ItineraryQuery } from './types';
-import { trips as initialTrips, departures as initialDepartures, blogPosts as initialBlogPosts, galleryPhotos as initialGalleryPhotos, instagramPosts as initialInstagramPosts, googleReviews as initialGoogleReviews, siteContent as initialSiteContent, itineraryQueries as initialItineraryQueries } from './data/mockData';
+import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, Review, GoogleReview, SiteContent, ItineraryQuery, ThemeColors, CustomPage } from './types';
+import { trips as initialTrips, departures as initialDepartures, blogPosts as initialBlogPosts, galleryPhotos as initialGalleryPhotos, instagramPosts as initialInstagramPosts, googleReviews as initialGoogleReviews, siteContent as initialSiteContent, itineraryQueries as initialItineraryQueries, customPages as initialCustomPages } from './data/mockData';
+import { themes } from './data/themes';
 import { generateBlogImage } from './services/geminiService';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -14,17 +16,36 @@ import BlogPage from './pages/BlogPage';
 import BlogDetailPage from './pages/BlogDetailPage';
 import GalleryPage from './pages/GalleryPage';
 import CustomizePage from './pages/CustomizePage';
+import DynamicPage from './pages/DynamicPage';
 
-type View = 'home' | 'tripDetail' | 'booking' | 'contact' | 'admin' | 'login' | 'blog' | 'blogDetail' | 'gallery' | 'customize';
+type View = 'home' | 'tripDetail' | 'booking' | 'contact' | 'admin' | 'login' | 'blog' | 'blogDetail' | 'gallery' | 'customize' | 'customPage';
 export type Theme = 'light' | 'dark';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [selectedBlogPost, setSelectedBlogPost] = useState<BlogPost | null>(null);
+  const [currentCustomPageSlug, setCurrentCustomPageSlug] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [initialDestinationFilter, setInitialDestinationFilter] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>('light');
+
+  // Data states
+  const [trips, setTrips] = useState<Trip[]>(initialTrips);
+  const [departures, setDepartures] = useState<Departure[]>(initialDepartures);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialBlogPosts);
+  const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>(initialGalleryPhotos);
+  const [instagramPosts, setInstagramPosts] = useState<InstagramPost[]>(initialInstagramPosts);
+  const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>(initialGoogleReviews);
+  
+  // Initialize siteContent from localStorage if available
+  const [siteContent, setSiteContent] = useState<SiteContent>(() => {
+    const savedContent = localStorage.getItem('siteContent');
+    return savedContent ? JSON.parse(savedContent) : initialSiteContent;
+  });
+
+  const [itineraryQueries, setItineraryQueries] = useState<ItineraryQuery[]>(initialItineraryQueries);
+  const [customPages, setCustomPages] = useState<CustomPage[]>(initialCustomPages);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
@@ -41,20 +62,68 @@ const App: React.FC = () => {
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
+  
+  // THEME INJECTION EFFECT
+  useEffect(() => {
+    const selectedThemeName = siteContent.activeTheme;
+    let themeColors: ThemeColors;
+
+    if (selectedThemeName === 'Custom') {
+        themeColors = siteContent.customThemeColors;
+    } else {
+        const foundTheme = themes.find(t => t.name === selectedThemeName);
+        themeColors = foundTheme ? foundTheme.colors : themes.find(t => t.name === 'Default')!.colors;
+    }
+
+    const root = document.documentElement;
+    const colorsToApply = theme === 'light' ? themeColors.light : themeColors.dark;
+    
+    // Comprehensive mapping of all theme variables
+    // These must match the Tailwind configuration in index.html
+    const colorMap = {
+        // Base Colors (Light Mode Default)
+        '--color-brand-primary': themeColors.light.primary,
+        '--color-brand-primary-dark': themeColors.light.primaryDark,
+        '--color-brand-accent-gold': themeColors.light.accentGold,
+        '--color-background': themeColors.light.background,
+        '--color-foreground': themeColors.light.foreground,
+        '--color-card': themeColors.light.card,
+        '--color-muted-foreground': themeColors.light.mutedForeground,
+        '--color-border': themeColors.light.border,
+        
+        // Dark Mode Specific Overrides (used by .dark class)
+        '--color-dark-background': themeColors.dark.background,
+        '--color-dark-foreground': themeColors.dark.foreground,
+        '--color-dark-card': themeColors.dark.card,
+        '--color-dark-muted-foreground': themeColors.dark.mutedForeground,
+        '--color-dark-border': themeColors.dark.border,
+
+        // If the current mode is dark, we also overwrite the 'base' variables
+        // This ensures third-party libraries or inline styles using standard variables look correct immediately
+        ...(theme === 'dark' ? {
+            '--color-brand-primary': themeColors.dark.primary,
+            '--color-brand-primary-dark': themeColors.dark.primaryDark,
+            '--color-brand-accent-gold': themeColors.dark.accentGold,
+            // Note: background/foreground/etc are handled by Tailwind 'dark:' prefix classes mapping to the dark-* vars
+            // But overwriting the base ones helps for un-prefixed classes
+            '--color-background': themeColors.dark.background,
+            '--color-foreground': themeColors.dark.foreground,
+            '--color-card': themeColors.dark.card,
+            '--color-muted-foreground': themeColors.dark.mutedForeground,
+            '--color-border': themeColors.dark.border,
+        } : {})
+    };
+    
+    for (const [property, value] of Object.entries(colorMap)) {
+      root.style.setProperty(property, value);
+    }
+
+  }, [siteContent.activeTheme, siteContent.customThemeColors, theme]);
+
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
-
-  // Data states
-  const [trips, setTrips] = useState<Trip[]>(initialTrips);
-  const [departures, setDepartures] = useState<Departure[]>(initialDepartures);
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialBlogPosts);
-  const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>(initialGalleryPhotos);
-  const [instagramPosts, setInstagramPosts] = useState<InstagramPost[]>(initialInstagramPosts);
-  const [googleReviews, setGoogleReviews] = useState<GoogleReview[]>(initialGoogleReviews);
-  const [siteContent, setSiteContent] = useState<SiteContent>(initialSiteContent);
-  const [itineraryQueries, setItineraryQueries] = useState<ItineraryQuery[]>(initialItineraryQueries);
 
   const uniqueDestinations = useMemo(() => [...new Set(trips.map(trip => trip.destination))], [trips]);
 
@@ -81,8 +150,11 @@ const App: React.FC = () => {
     setDepartures(prev => prev.filter(d => d.id !== departureId));
   };
 
-  const addBlogPost = async (post: Omit<BlogPost, 'id' | 'date' | 'imageUrl'>) => {
-    const imageUrl = await generateBlogImage(post.title, post.excerpt);
+  const addBlogPost = async (post: Omit<BlogPost, 'id' | 'date' | 'imageUrl'> & { imageUrl?: string }) => {
+    let imageUrl = post.imageUrl;
+    if (!imageUrl) {
+       imageUrl = await generateBlogImage(post.title, post.excerpt);
+    }
     const newPost = { 
       ...post, 
       id: `blog-${Date.now()}`, 
@@ -130,6 +202,17 @@ const App: React.FC = () => {
   const updateSiteContent = (newContent: Partial<SiteContent>) => {
     setSiteContent(prev => ({ ...prev, ...newContent }));
   };
+  
+  // --- Custom Page Management ---
+  const addCustomPage = (page: Omit<CustomPage, 'id'>) => {
+      setCustomPages(prev => [...prev, { ...page, id: `page-${Date.now()}` }]);
+  };
+  const updateCustomPage = (updatedPage: CustomPage) => {
+      setCustomPages(prev => prev.map(p => p.id === updatedPage.id ? updatedPage : p));
+  };
+  const deleteCustomPage = (pageId: string) => {
+      setCustomPages(prev => prev.filter(p => p.id !== pageId));
+  };
 
   const addItineraryQuery = (query: Omit<ItineraryQuery, 'id' | 'date'>) => {
     const newQuery: ItineraryQuery = {
@@ -175,6 +258,11 @@ const App: React.FC = () => {
   const handleSelectTrip = useCallback((trip: Trip) => {
     setSelectedTrip(trip);
     handleNavigate('tripDetail');
+  }, [handleNavigate]);
+  
+  const handleNavigateCustomPage = useCallback((slug: string) => {
+      setCurrentCustomPageSlug(slug);
+      handleNavigate('customPage');
   }, [handleNavigate]);
 
   const handleBookNow = useCallback((trip: Trip) => {
@@ -225,6 +313,9 @@ const App: React.FC = () => {
         return <GalleryPage photos={galleryPhotos} />;
       case 'customize':
         return <CustomizePage onNavigateContact={handleNavigateContact} trips={trips} />;
+      case 'customPage':
+        const activePage = customPages.find(p => p.slug === currentCustomPageSlug);
+        return activePage ? <DynamicPage page={activePage} /> : <div>Page Not Found</div>;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'admin':
@@ -238,6 +329,7 @@ const App: React.FC = () => {
                     googleReviews={googleReviews}
                     siteContent={siteContent}
                     itineraryQueries={itineraryQueries}
+                    customPages={customPages}
                     onAddTrip={addTrip}
                     onUpdateTrip={updateTrip}
                     onDeleteTrip={deleteTrip}
@@ -257,6 +349,10 @@ const App: React.FC = () => {
                     onUpdateGoogleReview={updateGoogleReview}
                     onDeleteGoogleReview={deleteGoogleReview}
                     onUpdateSiteContent={updateSiteContent}
+                    onAddCustomPage={addCustomPage}
+                    onUpdateCustomPage={updateCustomPage}
+                    onDeleteCustomPage={deleteCustomPage}
+                    onNavigateCustomPage={handleNavigateCustomPage}
                     onLogout={handleLogout}
                     theme={theme}
                 />;
@@ -282,7 +378,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground min-h-screen flex flex-col overflow-x-hidden">
+    <div className="bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden">
       <Header 
         onNavigateHome={handleNavigateHome} 
         onNavigateContact={handleNavigateContact} 
@@ -290,10 +386,12 @@ const App: React.FC = () => {
         onNavigateGallery={handleNavigateGallery}
         onNavigateCustomize={handleNavigateCustomize}
         onNavigateToTours={handleNavigateToTours}
+        onNavigateCustomPage={handleNavigateCustomPage}
         destinations={uniqueDestinations}
         siteContent={siteContent}
         theme={theme}
         toggleTheme={toggleTheme}
+        customPages={customPages}
       />
       <main className="flex-grow">
         {renderContent()}

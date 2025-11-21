@@ -1,4 +1,6 @@
-import type { Trip, Departure, Review, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery } from '../types';
+
+import type { Trip, Departure, Review, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery, ThemeColors, CustomPage, SectionConfig } from '../types';
+import { themes } from './themes';
 
 export const trips: Trip[] = [
   {
@@ -38,7 +40,13 @@ export const trips: Trip[] = [
     reviews: [
       { name: 'Alex R.', rating: 5, comment: 'An absolutely life-changing experience. The views were surreal and the Royal Enfield was a dream to ride. The team took care of everything. Highly recommended!', date: '2024-06-15' },
       { name: 'Samantha B.', rating: 4, comment: 'Incredible journey, but be prepared for the altitude! The roads are challenging but rewarding. The support crew was fantastic.', date: '2024-06-20' },
-    ]
+    ],
+    seo: {
+        title: 'Manali to Leh Bike Trip Package 2024 | Revrom.in',
+        description: 'Book the ultimate Manali to Leh motorcycle expedition. 12 days of high-altitude adventure crossing Khardung La and Pangong Tso.',
+        keywords: 'manali to leh bike trip, ladakh motorcycle tour, khardung la bike ride, himalayan moto tours',
+        ogImage: 'https://picsum.photos/seed/ladakh-bike/1200/630'
+    }
   },
   {
     id: 'ladakh-nubra-valley',
@@ -71,7 +79,13 @@ export const trips: Trip[] = [
     routeCoordinates: [[34.16, 77.57], [34.28, 77.60], [34.58, 77.56], [34.20, 78.14], [33.75, 78.65], [33.99, 77.85], [34.16, 77.57]],
     reviews: [
         { name: 'John D.', rating: 5, comment: 'Perfect trip for someone with limited time. Khardung La was the highlight, and the camels in Hunder were a unique experience. Well organized.', date: '2024-07-05' },
-    ]
+    ],
+    seo: {
+        title: 'Nubra Valley Motorcycle Expedition | Ladakh Tours',
+        description: '7-day motorcycle tour to Nubra Valley via Khardung La. Experience the sand dunes of Hunder and ride Bactrian camels in the high Himalayas.',
+        keywords: 'nubra valley bike trip, khardung la pass, hunder sand dunes, ladakh shorter tours',
+        ogImage: 'https://picsum.photos/seed/ladakh-nubra/1200/630'
+    }
   },
   {
     id: 'ladakh-changthang-lakes',
@@ -107,14 +121,20 @@ export const trips: Trip[] = [
     reviews: [
       { name: 'Maria S.', rating: 5, comment: 'This is the real deal for adventure seekers. The landscapes are otherworldly. Tough ride, but worth every moment. The team was exceptional, especially our mechanic.', date: '2024-08-01' },
       { name: 'Kenji T.', rating: 5, comment: 'Mind-blowing beauty and solitude. Tso Moriri was a spiritual experience. Not for the faint of heart, but if you are an experienced rider, do not miss this.', date: '2024-08-05' },
-    ]
+    ],
+    seo: {
+        title: 'Changthang Plateau & Great Lakes Bike Tour | Revrom',
+        description: 'Ride the remote Changthang plateau. Visit Pangong Tso, Tso Moriri, and Hanle on this expert-level motorcycle expedition.',
+        keywords: 'changthang bike ride, tso moriri lake tour, hanle observatory, ladakh offroad biking',
+        ogImage: 'https://picsum.photos/seed/ladakh-lake/1200/630'
+    }
   },
   {
     id: 'zanskar-forbidden-kingdom',
     title: 'The Forbidden Kingdom of Zanskar',
     destination: 'Zanskar, India',
     shortDescription: 'An extreme adventure into the isolated and rugged Zanskar valley, a true test of a rider\'s spirit.',
-    longDescription: '### Venture into the Last True Himalayan Kingdom\n\nThis is not just a tour; it\'s an expedition. Zanskar, one of the most remote regions in the Himalayas, is a land of stark beauty, ancient monasteries carved into cliffs, and formidable passes. This ride takes you through newly opened roads, over high passes like the Pensi La, and offers a glimpse into a way of life that has remained unchanged for centuries.\n\n#### Expedition Highlights\n* **Extreme Remoteness:** Traverse one of the most isolated regions on the planet.\n* **Pensi La Pass:** Conquer the gateway to Zanskar with stunning views of the Drang-Drung Glacier.\n* **Cliffside Monasteries:** Witness the architectural marvels of Phugtal and Karsha monasteries.\n* **Ultimate Challenge:** A demanding route for experienced riders seeking the ultimate adventure.',
+    longDescription: '### Venture into the Last True Himalayan Kingdom\n\nThis is not just a tour; it\'s an expedition. Zanskar, one of the most remote regions in the Himalayas, is a land of stark beauty, ancient monasteries, and the famous double-humped Bactrian camels.\n\n#### Expedition Highlights\n* **Extreme Remoteness:** Traverse one of the most isolated regions on the planet.\n* **Pensi La Pass:** Conquer the gateway to Zanskar with stunning views of the Drang-Drung Glacier.\n* **Cliffside Monasteries:** Witness the architectural marvels of Phugtal and Karsha monasteries.\n* **Ultimate Challenge:** A demanding route for experienced riders seeking the ultimate adventure.',
     duration: 14,
     price: 315000,
     imageUrl: 'https://picsum.photos/seed/ladakh-zanskar/800/600',
@@ -145,7 +165,13 @@ export const trips: Trip[] = [
     difficulty: 'Expert',
     route: 'Leh - Kargil - Rangdum - Padum - Leh',
     routeCoordinates: [[34.16, 77.57], [34.55, 76.13], [34.25, 75.87], [33.85, 76.28], [33.47, 76.88], [33.85, 76.28], [34.25, 75.87], [34.55, 76.13], [34.16, 77.57]],
-    reviews: []
+    reviews: [],
+    seo: {
+        title: 'Zanskar Valley Motorcycle Expedition | The Forbidden Kingdom',
+        description: 'Ride into the isolated Zanskar Valley. See the Drang-Drung Glacier and Phugtal Monastery on this 14-day expert motorcycle tour.',
+        keywords: 'zanskar bike trip, padum motorcycle tour, pensi la pass, remote himalayan biking',
+        ogImage: 'https://picsum.photos/seed/ladakh-zanskar/1200/630'
+    }
   },
   {
     id: 'spiti-valley-adventure',
@@ -180,7 +206,13 @@ export const trips: Trip[] = [
     difficulty: 'Advanced',
     route: 'Shimla - Sangla - Kalpa - Kaza - Chandratal - Manali',
     routeCoordinates: [[31.10, 77.17], [31.42, 78.26], [31.52, 78.03], [32.22, 78.03], [32.29, 77.63], [32.24, 77.18], [30.73, 76.77]],
-    reviews: []
+    reviews: [],
+    seo: {
+        title: 'Spiti Valley Bike Trip | The Middle Land Adventure',
+        description: '11-day complete circuit of Spiti Valley starting from Shimla. Visit Kaza, Chandratal, and Key Monastery on this adventure ride.',
+        keywords: 'spiti valley bike tour, shimla to kaza, chandratal lake camping, himachal motorcycle trip',
+        ogImage: 'https://picsum.photos/seed/ladakh-spiti/1200/630'
+    }
   },
   {
     id: 'kashmir-paradise-ride',
@@ -212,7 +244,13 @@ export const trips: Trip[] = [
     difficulty: 'Intermediate',
     route: 'Srinagar - Gulmarg - Pahalgam - Gurez - Srinagar',
     routeCoordinates: [[34.08, 74.79], [34.05, 74.38], [33.81, 75.12], [34.73, 74.87], [34.08, 74.79]],
-    reviews: []
+    reviews: [],
+    seo: {
+        title: 'Kashmir Motorcycle Tour | Srinagar, Gulmarg & Gurez',
+        description: 'Ride through paradise. Explore the lush valleys of Kashmir, stay in a houseboat, and visit the remote Gurez Valley.',
+        keywords: 'kashmir bike trip, srinagar motorcycle rental, gurez valley ride, gulmarg tour',
+        ogImage: 'https://picsum.photos/seed/ladakh-kashmir/1200/630'
+    }
   }
 ];
 
@@ -235,7 +273,13 @@ export const blogPosts: BlogPost[] = [
         date: '2024-09-10',
         imageUrl: 'https://picsum.photos/seed/ladakh-chushul-village/800/600',
         excerpt: 'Discover the story behind Revrom.in, born from the remote, resilient spirit of Chushul village, home to the legendary Rezang La war memorial and the strategic Chushul Heights.',
-        content: 'Our story isn\'t written in boardrooms; it\'s etched into the high-altitude desert landscapes of Ladakh, specifically in a place we call home: Chushul village. Located on the extreme frontier of India, Chushul is more than just a remote settlement; it is a land of immense beauty, harsh weather, and profound historical significance.\n\n**The Legacy of Rezang La**\n\nTo understand us, you must first understand the legacy of the land. Chushul is home to the Rezang La War Memorial, a solemn tribute to the incredible bravery of the 13th Kumaon Regiment\'s \'C\' Company, who made their last stand here during the 1962 war. This memorial is not just a structure; it\'s a testament to the resilience and courage that defines the spirit of this region. Growing up in the shadow of this valor has instilled in us a deep respect for our land and its history.\n\n**The Significance of Chushul Heights**\n\nThe landscape around our village is dominated by the strategic Chushul Heights. These are not just mountains; they are vantage points that have shaped history and offer some of the most commanding and breathtaking views of the Pangong Tso range and the Spanggur Gap. For us, these heights represent perspective, a deep understanding of the terrain, and the ability to see the bigger picture—qualities we bring to every tour we design.\n\n**Our Promise: An Authentic Experience**\n\nOur roots in Chushul mean we are not just tour operators; we are storytellers and custodians of our culture. Our team, born and raised in this extreme environment, possesses an unparalleled, intimate knowledge of the routes, the weather, and the hidden gems that other tours miss. When you ride with Revrom.in, you\'re not just a tourist; you are a guest, welcomed into our world to experience the raw, unfiltered beauty and spirit of the true Ladakh. We take you beyond the postcards and into the heart of the Himalayas.'
+        content: 'Our story isn\'t written in boardrooms; it\'s etched into the high-altitude desert landscapes of Ladakh, specifically in a place we call home: Chushul village. Located on the extreme frontier of India, Chushul is more than just a remote settlement; it is a land of immense beauty, harsh weather, and profound historical significance.\n\n**The Legacy of Rezang La**\n\nTo understand us, you must first understand the legacy of the land. Chushul is home to the Rezang La War Memorial, a solemn tribute to the incredible bravery of the 13th Kumaon Regiment\'s \'C\' Company led by Major Shaitan Singh. In the freezing winter of 1962, these 120 men fought to the last man and last bullet against overwhelming odds to protect Ladakh. This act of supreme sacrifice is not just history to us; it is the very fabric of our identity. It teaches us that resilience isn\'t just about surviving the harsh climate, but about standing firm in what you believe in, no matter the odds. This spirit of unyielding courage is what we breathe every day.\n\n**The Significance of Chushul Heights**\n\nThe landscape around our village is dominated by the strategic Chushul Heights—Black Top, Helmet Top, and Gurung Hill. These peaks are silent sentinels that have witnessed history unfold. Living at 14,000 feet, amidst these imposing giants, shapes a unique perspective. It demands a deep understanding of the terrain and a humble respect for nature\'s power. For us, these heights represent the ability to see the bigger picture and the fortitude required to navigate life on the edge—qualities we bring to every tour we design.\n\n**Our Promise: An Authentic Experience**\n\nOur roots in Chushul mean we are not just tour operators; we are storytellers and custodians of our culture. Our team, born and raised in this extreme environment, possesses an unparalleled, intimate knowledge of the routes, the weather, and the hidden gems that other tours miss. When you ride with Revrom.in, you\'re not just a tourist; you are a guest, welcomed into our world to experience the raw, unfiltered beauty and spirit of the true Ladakh. We take you beyond the postcards and into the heart of the Himalayas.',
+        seo: {
+            title: 'The Revrom Story: Chushul, Rezang La & Resilience',
+            description: 'Learn about the origins of Revrom.in in the historic Chushul village, Ladakh. Discover the legacy of Rezang La and how the frontier spirit shapes our motorcycle tours.',
+            keywords: 'chushul village, rezang la memorial, chushul heights, ladakh history, revrom story',
+            ogImage: 'https://picsum.photos/seed/ladakh-chushul-village/1200/630'
+        }
     },
     {
         id: 'blog-1',
@@ -358,9 +402,26 @@ export const googleReviews: GoogleReview[] = [
 
 export const itineraryQueries: ItineraryQuery[] = [];
 
+export const customPages: CustomPage[] = [
+    {
+        id: 'page-1',
+        title: 'Visa Information',
+        slug: 'visa-information',
+        content: '# Visa Information for India\n\nTravelers from most countries require a visa to enter India. You can apply for an e-Visa online.\n\n## Required Documents\n* Passport valid for 6 months\n* Recent photo\n* Return ticket',
+        isVisible: true,
+        imageUrl: 'https://picsum.photos/seed/visa/800/300',
+        seo: {
+            title: 'India E-Visa Information for Travelers',
+            description: 'Complete guide to obtaining an Indian e-Visa for your motorcycle tour. Requirements, documents, and process explained.',
+            keywords: 'india visa, e-visa india, travel visa, indian visa requirements',
+            ogImage: 'https://picsum.photos/seed/visa/1200/630'
+        }
+    }
+];
+
 export const siteContent: SiteContent = {
-    heroTitle: "The Best Ride There Is.",
-    heroSubtitle: "Unforgettable Motorcycle Adventures in the Heart of the Himalayas.",
+    heroTitle: "Ride Through The Himalayas",
+    heroSubtitle: "Unforgettable Motorcycle Journeys.",
     adventuresTitle: "Our Adventures",
     adventuresSubtitle: "Find the perfect ride. Filter by destination, duration, and difficulty.",
     departuresTitle: "Upcoming Departures",
@@ -378,4 +439,23 @@ export const siteContent: SiteContent = {
     googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Google&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4",
     adminWhatsappNumber: "919876543210",
     logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAABFCAMAAAC3zTykAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURf///87Ozv///83NzbS0tAC53v4AAAMESURBVGFjYIAEAAAA//8AIAABAAAAAADgIQNuAACBlAX+iIAnAAAAAElFTkSuQmCC",
+    activeTheme: 'Default',
+    customThemeColors: themes.find(t => t.name === 'Default')!.colors as ThemeColors,
+    homePageLayout: [
+        { id: 'HERO', isVisible: true, label: 'Hero Section' },
+        { id: 'ADVENTURES', isVisible: true, label: 'Tours Grid' },
+        { id: 'DEPARTURES', isVisible: true, label: 'Departure Dates' },
+        { id: 'CUSTOMIZE', isVisible: true, label: 'Customize CTA' },
+        { id: 'WHY_CHOOSE_US', isVisible: true, label: 'Features / Why Us' },
+        { id: 'ROOTS', isVisible: true, label: 'About / Roots' },
+        { id: 'REVIEWS', isVisible: true, label: 'Testimonials' },
+        { id: 'BLOG', isVisible: true, label: 'Blog Posts' },
+        { id: 'GALLERY', isVisible: true, label: 'Photo Gallery' },
+        { id: 'INSTAGRAM', isVisible: true, label: 'Instagram Feed' },
+    ],
+    globalSeo: {
+        title: 'Revrom.in | Ride. Roam. Relax. | Himalayan Motorcycle Tours',
+        description: 'Experience the thrill of the Himalayas with Revrom.in. Premium motorcycle tours in Ladakh, Spiti, and Kashmir. Book your adventure today.',
+        keywords: 'motorcycle tours, ladakh bike trip, himalayan adventures, bike rentals leh, spiti valley bike tour'
+    }
 };

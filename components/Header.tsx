@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import type { SiteContent } from '../types';
+import type { SiteContent, CustomPage } from '../types';
 import type { Theme } from '../App';
 import ThemeToggle from './ThemeToggle';
 
@@ -10,10 +11,12 @@ interface HeaderProps {
   onNavigateGallery: () => void;
   onNavigateCustomize: () => void;
   onNavigateToTours: (destination: string | null) => void;
+  onNavigateCustomPage: (slug: string) => void;
   destinations: string[];
   siteContent: SiteContent;
   theme: Theme;
   toggleTheme: () => void;
+  customPages: CustomPage[];
 }
 
 const ChevronDownIcon: React.FC<{className?: string}> = ({ className }) => (
@@ -49,7 +52,7 @@ const MapPinIcon: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 
-const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery, onNavigateCustomize, onNavigateToTours, destinations, siteContent, theme, toggleTheme }) => {
+const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNavigateBlog, onNavigateGallery, onNavigateCustomize, onNavigateToTours, onNavigateCustomPage, destinations, siteContent, theme, toggleTheme, customPages }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -80,18 +83,20 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
     };
   }, [isMobileMenuOpen]);
 
+  const visibleCustomPages = customPages.filter(p => p.isVisible);
+
   return (
     <header className="bg-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border dark:border-dark-border">
       <nav className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer">
           {siteContent.logoUrl ? (
-              <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
+              <img src={siteContent.logoUrl} alt="Agency Logo" className="h-10 w-auto" />
           ) : (
-              <div className="text-foreground dark:text-dark-foreground">Fallback Logo</div>
+              <div className="text-foreground dark:text-dark-foreground font-display font-bold text-xl">Agency Logo</div>
           )}
         </button>
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Home</a>
           
           <div className="relative" ref={dropdownRef}>
@@ -140,7 +145,12 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
               )}
           </div>
 
-          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Customize Tour</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Customize</a>
+          
+          {visibleCustomPages.map(page => (
+             <a key={page.id} href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomPage(page.slug); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">{page.title}</a>
+          ))}
+          
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Gallery</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Blog</a>
           <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors duration-300 font-medium">Contact</a>
@@ -148,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center gap-4">
+        <div className="lg:hidden flex items-center gap-4">
             <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
             <button onClick={() => setIsMobileMenuOpen(true)} aria-label="Open menu" aria-controls="mobile-menu" aria-expanded={isMobileMenuOpen}>
                 <MenuIcon className="w-6 h-6 text-foreground dark:text-dark-foreground" />
@@ -158,7 +168,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
 
       {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 z-50 md:hidden transition-opacity duration-200 ease-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-200 ease-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="mobile-menu-title"
@@ -178,19 +188,22 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
                   <h2 id="mobile-menu-title" className="sr-only">Main Menu</h2>
                   <button onClick={() => handleMobileNavClick(onNavigateHome)}>
                      {siteContent.logoUrl ? (
-                        <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto" />
+                        <img src={siteContent.logoUrl} alt="Agency Logo" className="h-10 w-auto" />
                      ) : (
-                        <div className="text-foreground dark:text-dark-foreground">Fallback Logo</div>
+                        <div className="text-foreground dark:text-dark-foreground">Agency Logo</div>
                      )}
                   </button>
                   <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close menu">
                       <XIcon className="w-6 h-6 text-foreground dark:text-dark-foreground" />
                   </button>
               </div>
-              <div className="flex flex-col space-y-6 p-6">
+              <div className="flex flex-col space-y-6 p-6 overflow-y-auto">
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateHome); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Home</a>
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateToTours, null); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">All Tours</a>
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomize); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Customize Tour</a>
+                  {visibleCustomPages.map(page => (
+                     <a key={page.id} href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateCustomPage, page.slug); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">{page.title}</a>
+                  ))}
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateGallery); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Gallery</a>
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateBlog); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Blog</a>
                   <a href="#" onClick={(e) => { e.preventDefault(); handleMobileNavClick(onNavigateContact); }} className="text-foreground dark:text-dark-foreground hover:text-brand-primary text-lg font-medium">Contact</a>

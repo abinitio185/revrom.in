@@ -1,8 +1,10 @@
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent } from '../types';
 import TripCard from '../components/TripCard';
 import BlogPostCard from '../components/BlogPostCard';
 import SearchAndFilter from '../components/SearchAndFilter';
+import SEOHead from '../components/SEOHead';
 
 interface HomePageProps {
   trips: Trip[];
@@ -21,6 +23,7 @@ interface HomePageProps {
   onClearInitialFilter: () => void;
 }
 
+// --- ICONS ---
 const ReelIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
         <path d="M8.25 4.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-1.5 0V5.25a.75.75 0 0 1 .75-.75ZM15.75 4.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-1.5 0V5.25a.75.75 0 0 1 .75-.75ZM4.5 8.25a.75.75 0 0 0 0 1.5h15a.75.75 0 0 0 0-1.5H4.5Z" />
@@ -81,13 +84,24 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 const DepartureStatusBadge: React.FC<{ status: Departure['status'] }> = ({ status }) => {
-  const baseClasses = "px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset";
-  const statusClasses = {
-    Available: "bg-green-100 text-green-800 ring-green-600/20 dark:bg-green-900/50 dark:text-green-300 dark:ring-green-400/20",
-    'Sold Out': "bg-red-100 text-red-800 ring-red-600/20 dark:bg-red-900/50 dark:text-red-300 dark:ring-red-400/20",
-    Limited: "bg-yellow-100 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/50 dark:text-yellow-300 dark:ring-yellow-400/20",
+  const baseClasses = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ring-1 ring-inset";
+  const statusConfig = {
+    Available: {
+        classes: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-500/30",
+        icon: (<svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true"><circle cx={3} cy={3} r={3} /></svg>)
+    },
+    'Sold Out': {
+        classes: "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-500/30",
+         icon: (<svg className="h-1.5 w-1.5 fill-red-500" viewBox="0 0 6 6" aria-hidden="true"><circle cx={3} cy={3} r={3} /></svg>)
+    },
+    Limited: {
+        classes: "bg-yellow-50 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-900/30 dark:text-yellow-500 dark:ring-yellow-500/30",
+         icon: (<svg className="h-1.5 w-1.5 fill-yellow-500" viewBox="0 0 6 6" aria-hidden="true"><circle cx={3} cy={3} r={3} /></svg>)
+    },
   };
-  return <span className={`${baseClasses} ${statusClasses[status]}`}>{status}</span>;
+  
+  const config = statusConfig[status];
+  return <span className={`${baseClasses} ${config.classes}`}>{config.icon}{status}</span>;
 };
 
 const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, children: React.ReactNode }> = ({ icon, title, children }) => (
@@ -212,22 +226,57 @@ const HomePage: React.FC<HomePageProps> = (props) => {
       setDepartureMonthFilter('all');
   };
 
-  return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative h-[70vh] md:h-[90vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-hero/1920/1080')" }}>
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative text-center z-10 px-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-display leading-tight mb-4">{siteContent.heroTitle}</h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto">{siteContent.heroSubtitle}</p>
-          <button onClick={() => document.getElementById('tours-section')?.scrollIntoView({ behavior: 'smooth' })} className="mt-8 bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">
-            Explore Tours
-          </button>
+
+  // --- SUB-COMPONENTS RENDERERS ---
+
+  const renderHero = () => (
+      <section key="HERO" className="relative h-[70vh] md:h-[90vh] overflow-hidden flex items-center justify-center text-white">
+        {/* Video Background */}
+        <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            poster="https://picsum.photos/seed/ladakh-hero/1920/1080"
+        >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-motorcyclist-riding-through-a-mountain-road-4262-large.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+        
+        {/* Overlays for readability */}
+        <div className="absolute inset-0 bg-black/40 md:bg-black/30"></div> {/* Base dimming */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40"></div> {/* Gradient for depth */}
+
+        {/* Content */}
+        <div className="relative text-center z-10 px-4 max-w-5xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold font-display leading-tight mb-6 drop-shadow-2xl tracking-tight">
+            {siteContent.heroTitle}
+          </h1>
+          <p className="text-lg md:text-2xl max-w-3xl mx-auto mb-10 drop-shadow-lg font-medium text-gray-100 leading-relaxed">
+            {siteContent.heroSubtitle}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+             <button 
+                onClick={() => document.getElementById('tours-section')?.scrollIntoView({ behavior: 'smooth' })} 
+                className="group relative bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-4 px-10 rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(221,107,32,0.5)] hover:shadow-[0_0_30px_rgba(221,107,32,0.7)] border border-white/10 overflow-hidden"
+             >
+                <span className="relative z-10 flex items-center gap-2">
+                    Explore Tours
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform group-hover:translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+             </button>
+          </div>
         </div>
       </section>
+  );
 
-      {/* Our Adventures Section */}
-      <section id="tours-section" className="py-16 md:py-24 bg-background dark:bg-dark-background">
+  const renderAdventures = () => (
+      <section key="ADVENTURES" id="tours-section" className="py-16 md:py-24 bg-background dark:bg-dark-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground dark:text-dark-foreground">{siteContent.adventuresTitle}</h2>
@@ -249,9 +298,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           </div>
         </div>
       </section>
+  );
 
-      {/* Upcoming Departures Section */}
-      <section className="py-16 md:py-24 bg-card dark:bg-dark-card">
+  const renderDepartures = () => (
+      <section key="DEPARTURES" className="py-16 md:py-24 bg-card dark:bg-dark-card">
         <div className="container mx-auto px-4 sm:px-6">
            <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12 text-foreground dark:text-dark-foreground">{siteContent.departuresTitle}</h2>
            
@@ -303,27 +353,39 @@ const HomePage: React.FC<HomePageProps> = (props) => {
                     <tr>
                       <th scope="col" className="px-6 py-3">Tour Name</th>
                       <th scope="col" className="px-6 py-3">Date</th>
-                      <th scope="col" className="px-6 py-3">Status</th>
+                      <th scope="col" className="px-6 py-3 text-center">Slots</th>
+                      <th scope="col" className="px-6 py-3 text-center">Status</th>
                       <th scope="col" className="px-6 py-3"><span className="sr-only">Inquire</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredDepartures.length > 0 ? (
                       filteredDepartures.map(({ trip, ...departure }) => (
-                          <tr key={departure.id} className="border-b border-border dark:border-dark-border hover:bg-black/5 dark:hover:bg-white/5">
+                          <tr key={departure.id} className="border-b border-border dark:border-dark-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                             <th scope="row" className="px-6 py-4 font-medium text-foreground dark:text-dark-foreground whitespace-nowrap">
                               <a href="#" onClick={(e) => { e.preventDefault(); onSelectTrip(trip); }} className="hover:text-brand-primary transition-colors">{trip.title}</a>
                             </th>
-                            <td className="px-6 py-4">{new Date(departure.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(departure.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-                            <td className="px-6 py-4"><DepartureStatusBadge status={departure.status} /></td>
-                            <td className="px-6 py-4 text-right">
-                              <button onClick={() => onBookNow(trip)} disabled={departure.status === 'Sold Out'} className="font-medium text-brand-primary hover:underline disabled:text-muted-foreground disabled:no-underline">Inquire</button>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                {new Date(departure.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(departure.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="px-6 py-4 text-center whitespace-nowrap">
+                                 <span className={`font-mono font-bold ${
+                                     departure.slots === 0 ? 'text-red-500 dark:text-red-400' :
+                                     departure.slots <= 3 ? 'text-yellow-600 dark:text-yellow-400' :
+                                     'text-green-600 dark:text-green-400'
+                                 }`}>
+                                    {departure.slots}
+                                 </span>
+                            </td>
+                            <td className="px-6 py-4 text-center whitespace-nowrap"><DepartureStatusBadge status={departure.status} /></td>
+                            <td className="px-6 py-4 text-right whitespace-nowrap">
+                              <button onClick={() => onBookNow(trip)} disabled={departure.status === 'Sold Out'} className="font-medium text-brand-primary hover:underline disabled:text-muted-foreground disabled:no-underline disabled:opacity-50 transition-all">Inquire</button>
                             </td>
                           </tr>
                         )
                       )
                     ) : (
-                      <tr><td colSpan={4} className="p-6 text-center text-muted-foreground dark:text-dark-muted-foreground">No departures match your criteria. Try adjusting the filters.</td></tr>
+                      <tr><td colSpan={5} className="p-6 text-center text-muted-foreground dark:text-dark-muted-foreground">No departures match your criteria. Try adjusting the filters.</td></tr>
                     )}
                   </tbody>
                </table>
@@ -331,9 +393,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
            </div>
         </div>
       </section>
+  );
 
-      {/* Customize Tour Section */}
-      <section className="py-16 md:py-24 bg-background dark:bg-dark-background">
+  const renderCustomize = () => (
+      <section key="CUSTOMIZE" className="py-16 md:py-24 bg-background dark:bg-dark-background">
         <div className="container mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground dark:text-dark-foreground">{siteContent.customizeTitle}</h2>
             <p className="mt-4 text-lg text-muted-foreground dark:text-dark-muted-foreground max-w-3xl mx-auto">{siteContent.customizeSubtitle}</p>
@@ -342,9 +405,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             </button>
         </div>
       </section>
+  );
 
-      {/* Why Choose Us Section */}
-      <section className="py-16 md:py-24 bg-card dark:bg-dark-card">
+  const renderWhyChooseUs = () => (
+      <section key="WHY_CHOOSE_US" className="py-16 md:py-24 bg-card dark:bg-dark-card">
         <div className="container mx-auto px-4 sm:px-6">
             <div className="text-center mb-12">
                 <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground dark:text-dark-foreground">Why Choose Us?</h2>
@@ -366,9 +430,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             </div>
         </div>
       </section>
+  );
 
-      {/* Our Roots Section */}
-      <section className="relative py-20 md:py-32 bg-cover bg-center text-white" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-rezangla/1920/1080')" }}>
+  const renderRoots = () => (
+      <section key="ROOTS" className="relative py-20 md:py-32 bg-cover bg-center text-white" style={{ backgroundImage: "url('https://picsum.photos/seed/ladakh-rezangla/1920/1080')" }}>
           <div className="absolute inset-0 bg-dark-background/70"></div>
           <div className="container mx-auto px-4 sm:px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
               <div className="text-center md:text-left">
@@ -380,9 +445,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
               </div>
           </div>
       </section>
+  );
 
-      {/* Google Reviews Section */}
-      <section className="py-16 md:py-24 bg-card dark:bg-dark-card">
+  const renderReviews = () => (
+      <section key="REVIEWS" className="py-16 md:py-24 bg-card dark:bg-dark-card">
         <div className="container mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">What Our Riders Say</h2>
             <p className="max-w-2xl mx-auto text-muted-foreground dark:text-dark-muted-foreground mb-12">Real stories from riders who have experienced the Himalayas with us.</p>
@@ -409,9 +475,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <a href={siteContent.googleReviewsUrl} target="_blank" rel="noopener noreferrer" className="mt-12 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">Read more on Google</a>
         </div>
       </section>
-      
-      {/* Latest Blog Posts Section */}
-      <section className="py-16 md:py-24 bg-background dark:bg-dark-background">
+  );
+
+  const renderBlog = () => (
+      <section key="BLOG" className="py-16 md:py-24 bg-background dark:bg-dark-background">
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="text-3xl md:text-4xl font-bold font-display text-center mb-12 text-foreground dark:text-dark-foreground">{siteContent.blogTitle}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -419,9 +486,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           </div>
         </div>
       </section>
+  );
 
-      {/* Gallery Preview Section */}
-      <section className="py-16 md:py-24 bg-card dark:bg-dark-card">
+  const renderGallery = () => (
+      <section key="GALLERY" className="py-16 md:py-24 bg-card dark:bg-dark-card">
         <div className="container mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">{siteContent.galleryTitle}</h2>
             <p className="max-w-2xl mx-auto text-muted-foreground dark:text-dark-muted-foreground mb-12">{siteContent.gallerySubtitle}</p>
@@ -435,9 +503,10 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <button onClick={onNavigateGallery} className="mt-12 bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-8 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-lg">View Full Gallery</button>
         </div>
       </section>
+  );
 
-      {/* Instagram Feed Section */}
-      <section className="py-16 md:py-24 bg-background dark:bg-dark-background">
+  const renderInstagram = () => (
+      <section key="INSTAGRAM" className="py-16 md:py-24 bg-background dark:bg-dark-background">
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <div className="mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">{siteContent.instagramTitle}</h2>
@@ -472,6 +541,49 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             </a>
         </div>
       </section>
+  );
+
+  const componentMap = {
+      'HERO': renderHero,
+      'ADVENTURES': renderAdventures,
+      'DEPARTURES': renderDepartures,
+      'CUSTOMIZE': renderCustomize,
+      'WHY_CHOOSE_US': renderWhyChooseUs,
+      'ROOTS': renderRoots,
+      'REVIEWS': renderReviews,
+      'BLOG': renderBlog,
+      'GALLERY': renderGallery,
+      'INSTAGRAM': renderInstagram
+  };
+
+  // If no layout is defined (legacy support), default to standard order
+  const layout = siteContent.homePageLayout || [
+      { id: 'HERO', isVisible: true },
+      { id: 'ADVENTURES', isVisible: true },
+      { id: 'DEPARTURES', isVisible: true },
+      { id: 'CUSTOMIZE', isVisible: true },
+      { id: 'WHY_CHOOSE_US', isVisible: true },
+      { id: 'ROOTS', isVisible: true },
+      { id: 'REVIEWS', isVisible: true },
+      { id: 'BLOG', isVisible: true },
+      { id: 'GALLERY', isVisible: true },
+      { id: 'INSTAGRAM', isVisible: true }
+  ];
+
+  return (
+    <div>
+      <SEOHead 
+        title={siteContent.globalSeo?.title} 
+        description={siteContent.globalSeo?.description} 
+        keywords={siteContent.globalSeo?.keywords}
+      />
+      {layout
+        .filter(section => section.isVisible)
+        .map(section => {
+            const Renderer = componentMap[section.id];
+            return Renderer ? Renderer() : null;
+        })
+      }
     </div>
   );
 };

@@ -1,8 +1,16 @@
+
 export interface Review {
   name: string;
   rating: number; // 1-5
   comment: string;
   date: string;
+}
+
+export interface SEOConfig {
+  title?: string;
+  description?: string;
+  keywords?: string; // Comma separated
+  ogImage?: string;
 }
 
 export interface Trip {
@@ -23,6 +31,7 @@ export interface Trip {
   route: string;
   routeCoordinates: [number, number][];
   reviews: Review[];
+  seo?: SEOConfig;
 }
 
 export interface Departure {
@@ -42,6 +51,7 @@ export interface BlogPost {
   imageUrl: string;
   excerpt: string;
   content: string; // Could be markdown-like text
+  seo?: SEOConfig;
 }
 
 export interface GalleryPhoto {
@@ -78,6 +88,47 @@ export interface ItineraryQuery {
     date: string;
 }
 
+export interface ColorSet {
+  primary: string;
+  primaryDark: string;
+  accentGold: string;
+  background: string;
+  foreground: string;
+  card: string;
+  mutedForeground: string;
+  border: string;
+}
+
+export interface ThemeColors {
+  light: ColorSet;
+  dark: ColorSet;
+}
+
+export interface ThemeOption {
+  name: string;
+  colors: ThemeColors;
+}
+
+// --- CMS / Builder Types ---
+
+export interface CustomPage {
+  id: string;
+  title: string;
+  slug: string;
+  content: string; // Markdown
+  imageUrl?: string;
+  isVisible: boolean;
+  seo?: SEOConfig;
+}
+
+export type HomePageSection = 'HERO' | 'ADVENTURES' | 'DEPARTURES' | 'CUSTOMIZE' | 'WHY_CHOOSE_US' | 'ROOTS' | 'REVIEWS' | 'BLOG' | 'GALLERY' | 'INSTAGRAM';
+
+export interface SectionConfig {
+    id: HomePageSection;
+    isVisible: boolean;
+    label: string; // For Admin UI
+}
+
 export interface SiteContent {
     heroTitle: string;
     heroSubtitle: string;
@@ -98,4 +149,10 @@ export interface SiteContent {
     googleReviewsUrl: string;
     adminWhatsappNumber: string;
     logoUrl: string;
+    activeTheme: string;
+    customThemeColors: ThemeColors;
+    // New Fields for Builder
+    homePageLayout: SectionConfig[];
+    // Global SEO
+    globalSeo?: SEOConfig;
 }

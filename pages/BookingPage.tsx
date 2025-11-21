@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Trip } from '../types';
 
@@ -12,6 +13,12 @@ const WhatsAppIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
+const CheckCircleIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z" clipRule="evenodd" />
+    </svg>
+);
+
 const BookingPage: React.FC<BookingPageProps> = ({ trip, onBack }) => {
   const [travelers, setTravelers] = useState(1);
   const [name, setName] = useState('');
@@ -19,6 +26,7 @@ const BookingPage: React.FC<BookingPageProps> = ({ trip, onBack }) => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; terms?: string }>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validate = () => {
     const newErrors: { name?: string; email?: string; terms?: string } = {};
@@ -61,68 +69,117 @@ Please get back to me with more information regarding booking.
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     
     window.open(whatsappUrl, '_blank');
+    setIsSubmitted(true);
   };
 
   return (
     <>
     <div className="container mx-auto px-4 sm:px-6 py-8 md:py-16">
-        <button onClick={onBack} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary mb-8">&larr; Back to Tour Details</button>
+        <button onClick={onBack} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary mb-8 flex items-center gap-2">
+            <span>&larr;</span> Back to Tour Details
+        </button>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="md:col-span-2">
-                <h1 className="text-3xl md:text-4xl font-bold font-display mb-8 text-foreground dark:text-dark-foreground">Send a Booking Inquiry</h1>
-                <form onSubmit={handleSubmit} className="bg-card dark:bg-dark-card p-6 md:p-8 rounded-lg shadow-lg space-y-6 border border-border dark:border-dark-border">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="name" 
-                            value={name} 
-                            onChange={e => setName(e.target.value)} 
-                            required 
-                            className={`mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.name ? 'border-red-500' : 'border-border dark:border-dark-border'}`} 
-                            placeholder="Your Name" 
-                        />
-                        {errors.name && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.name}</p>}
-                    </div>
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            value={email} 
-                            onChange={e => setEmail(e.target.value)} 
-                            required 
-                            className={`mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.email ? 'border-red-500' : 'border-border dark:border-dark-border'}`} 
-                            placeholder="you@example.com" 
-                        />
-                        {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
-                    </div>
-                    <div>
-                        <label htmlFor="travelers" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Number of Riders</label>
-                        <input type="number" id="travelers" value={travelers} onChange={e => setTravelers(Math.max(1, parseInt(e.target.value, 10)))} min="1" className="mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground"/>
-                    </div>
-                    <div>
-                        <div className="flex items-center">
-                            <input 
-                                type="checkbox" 
-                                id="terms" 
-                                checked={agreedToTerms} 
-                                onChange={e => setAgreedToTerms(e.target.checked)} 
-                                className={`h-4 w-4 text-brand-primary focus:ring-brand-primary-dark border-border dark:border-dark-border rounded bg-background dark:bg-dark-background ${errors.terms ? 'ring-2 ring-red-500' : ''}`}
-                            />
-                            <label htmlFor="terms" className="ml-2 block text-sm text-foreground dark:text-dark-foreground">
-                                I agree to the <button type="button" onClick={() => setIsTermsModalOpen(true)} className="underline font-medium hover:text-brand-primary">Terms & Conditions</button>.
-                            </label>
+                {isSubmitted ? (
+                    <div className="bg-card dark:bg-dark-card p-8 rounded-lg shadow-lg border border-border dark:border-dark-border text-center flex flex-col items-center justify-center h-full animate-fade-in">
+                        <div className="mb-6 bg-green-100 dark:bg-green-900/30 p-4 rounded-full animate-bounce">
+                            <CheckCircleIcon className="w-16 h-16 text-green-600 dark:text-green-400" />
                         </div>
-                        {errors.terms && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.terms}</p>}
-                    </div>
-                    <div>
-                        <button type="submit" className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg">
-                            <WhatsAppIcon className="w-6 h-6" />
-                            <span>Inquire on WhatsApp</span>
+                        <h1 className="text-3xl md:text-4xl font-bold font-display mb-4 text-foreground dark:text-dark-foreground">Inquiry Sent Successfully!</h1>
+                        <p className="text-lg text-muted-foreground dark:text-dark-muted-foreground mb-8 max-w-lg">
+                            Thank you, <strong>{name}</strong>! We have opened WhatsApp for you to complete your inquiry with our team.
+                        </p>
+                        
+                        <div className="bg-background dark:bg-dark-background rounded-lg mb-8 w-full max-w-md text-left border border-border dark:border-dark-border shadow-md overflow-hidden group hover:shadow-xl transition-shadow duration-300">
+                             <div className="relative h-40 overflow-hidden">
+                                <img src={trip.imageUrl} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-4">
+                                    <h3 className="text-white font-bold font-display text-xl shadow-black drop-shadow-md">{trip.title}</h3>
+                                    <p className="text-white/90 text-xs font-medium uppercase tracking-wider mt-1">{trip.destination}</p>
+                                </div>
+                             </div>
+                             <div className="p-6 space-y-4">
+                                 <div className="flex justify-between items-center border-b border-border dark:border-dark-border pb-3">
+                                     <span className="text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Travelers</span>
+                                     <span className="font-bold text-foreground dark:text-dark-foreground text-lg">{travelers}</span>
+                                 </div>
+                                 <div className="flex justify-between items-center border-b border-border dark:border-dark-border pb-3">
+                                     <span className="text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Est. Total</span>
+                                     <span className="font-bold text-brand-primary text-lg">₹{(trip.price * travelers).toLocaleString('en-IN')}</span>
+                                 </div>
+                                 <div className="flex flex-col gap-1">
+                                     <span className="text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Contact Email</span>
+                                     <span className="font-medium text-foreground dark:text-dark-foreground break-all">{email}</span>
+                                 </div>
+                             </div>
+                        </div>
+
+                        <p className="text-muted-foreground dark:text-dark-muted-foreground mb-8 text-sm">
+                            WhatsApp didn't open? <a href={`https://wa.me/919876543210`} target="_blank" rel="noreferrer" className="text-brand-primary hover:underline font-medium">Click here to chat manually</a>
+                        </p>
+
+                        <button onClick={onBack} className="bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg shadow-lg transform hover:scale-105">
+                            Return to Tour Details
                         </button>
                     </div>
-                </form>
+                ) : (
+                    <>
+                        <h1 className="text-3xl md:text-4xl font-bold font-display mb-8 text-foreground dark:text-dark-foreground">Send a Booking Inquiry</h1>
+                        <form onSubmit={handleSubmit} className="bg-card dark:bg-dark-card p-6 md:p-8 rounded-lg shadow-lg space-y-6 border border-border dark:border-dark-border">
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    value={name} 
+                                    onChange={e => setName(e.target.value)} 
+                                    required 
+                                    className={`mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.name ? 'border-red-500' : 'border-border dark:border-dark-border'}`} 
+                                    placeholder="Your Name" 
+                                />
+                                {errors.name && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.name}</p>}
+                            </div>
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    value={email} 
+                                    onChange={e => setEmail(e.target.value)} 
+                                    required 
+                                    className={`mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground ${errors.email ? 'border-red-500' : 'border-border dark:border-dark-border'}`} 
+                                    placeholder="you@example.com" 
+                                />
+                                {errors.email && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.email}</p>}
+                            </div>
+                            <div>
+                                <label htmlFor="travelers" className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">Number of Riders</label>
+                                <input type="number" id="travelers" value={travelers} onChange={e => setTravelers(Math.max(1, parseInt(e.target.value, 10)))} min="1" className="mt-1 block w-full px-3 py-2 bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm text-foreground dark:text-dark-foreground"/>
+                            </div>
+                            <div>
+                                <div className="flex items-center">
+                                    <input 
+                                        type="checkbox" 
+                                        id="terms" 
+                                        checked={agreedToTerms} 
+                                        onChange={e => setAgreedToTerms(e.target.checked)} 
+                                        className={`h-4 w-4 text-brand-primary focus:ring-brand-primary-dark border-border dark:border-dark-border rounded bg-background dark:bg-dark-background ${errors.terms ? 'ring-2 ring-red-500' : ''}`}
+                                    />
+                                    <label htmlFor="terms" className="ml-2 block text-sm text-foreground dark:text-dark-foreground">
+                                        I agree to the <button type="button" onClick={() => setIsTermsModalOpen(true)} className="underline font-medium hover:text-brand-primary">Terms & Conditions</button>.
+                                    </label>
+                                </div>
+                                {errors.terms && <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.terms}</p>}
+                            </div>
+                            <div>
+                                <button type="submit" className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors duration-300 text-lg">
+                                    <WhatsAppIcon className="w-6 h-6" />
+                                    <span>Inquire on WhatsApp</span>
+                                </button>
+                            </div>
+                        </form>
+                    </>
+                )}
             </div>
             <aside className="md:col-span-1">
                  <div className="sticky top-28 bg-card dark:bg-dark-card p-6 rounded-lg shadow-md border border-border dark:border-dark-border">
@@ -151,7 +208,7 @@ Please get back to me with more information regarding booking.
     </div>
 
     {isTermsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm" onClick={() => setIsTermsModalOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setIsTermsModalOpen(false)}>
             <div className="bg-card dark:bg-dark-card p-8 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto border border-border dark:border-dark-border" onClick={e => e.stopPropagation()}>
                 <h2 className="text-2xl font-bold mb-4 text-foreground dark:text-dark-foreground">Terms & Conditions</h2>
                 <div className="prose prose-sm max-w-none text-muted-foreground dark:text-dark-muted-foreground dark:prose-invert">

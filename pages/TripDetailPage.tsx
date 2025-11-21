@@ -1,9 +1,11 @@
+
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import type { Trip, Review, ItineraryQuery } from '../types';
 import type { Theme } from '../App';
 import { generatePackingList } from '../services/geminiService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import TripRouteMap from '../components/TripRouteMap';
+import SEOHead from '../components/SEOHead';
 
 interface TripDetailPageProps {
   trip: Trip;
@@ -75,6 +77,18 @@ const InstagramIcon: React.FC<{className?: string}> = ({ className }) => (
 const StarIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
         <path fillRule="evenodd" d="M10.868 2.884c.321-.662 1.135-.662 1.456 0l1.86 3.847 4.25.618c.73.107 1.022.992.494 1.505l-3.076 2.998.726 4.232c.124.725-.638 1.282-1.28.948L10 15.347l-3.818 2.007c-.642.335-1.404-.223-1.28-.948l.726-4.232L2.55 8.854c-.528-.513-.236-1.398.494-1.505l4.25-.618 1.86-3.847z" clipRule="evenodd" />
+    </svg>
+);
+
+const PlusIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+);
+
+const MinusIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
     </svg>
 );
 
@@ -232,6 +246,13 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
 
   return (
     <div className="bg-background dark:bg-dark-background">
+      <SEOHead 
+        title={trip.seo?.title || `${trip.title} | Motorcycle Tour`} 
+        description={trip.seo?.description || trip.shortDescription} 
+        keywords={trip.seo?.keywords || `motorcycle tour, ${trip.destination}, ${trip.difficulty} riding`}
+        image={trip.seo?.ogImage || trip.imageUrl}
+      />
+
       {/* Hero Gallery */}
       <section className="relative bg-black group">
           <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
@@ -294,23 +315,38 @@ const TripDetailPage: React.FC<TripDetailPageProps> = ({ trip, onBookNow, onBack
             </div>
 
             <h2 className="text-3xl font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Daily Itinerary</h2>
-            <div className="space-y-2">
-                {trip.itinerary.map((item) => (
-                    <div key={item.day} className="border border-border dark:border-dark-border rounded-lg overflow-hidden">
-                        <button
-                            onClick={() => toggleItineraryDay(item.day)}
-                            className="w-full flex justify-between items-center p-4 text-left bg-card/50 dark:bg-dark-card/50 hover:bg-black/5 dark:hover:bg-white/5"
-                        >
-                            <h3 className="font-semibold text-lg text-foreground dark:text-dark-foreground">Day {item.day}: {item.title}</h3>
-                            <ChevronRightIcon className={`w-6 h-6 text-muted-foreground dark:text-dark-muted-foreground transition-transform duration-300 ${activeDay === item.day ? 'rotate-90' : ''}`} />
-                        </button>
-                        <div className={`transition-all duration-500 ease-in-out ${activeDay === item.day ? 'max-h-screen' : 'max-h-0'}`}>
-                            <div className="p-4 border-t border-border dark:border-dark-border text-muted-foreground dark:text-dark-muted-foreground bg-card dark:bg-dark-card">
-                                {item.description}
+            <div className="space-y-3">
+                {trip.itinerary.map((item) => {
+                    const isOpen = activeDay === item.day;
+                    return (
+                        <div key={item.day} className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? 'border-brand-primary/50 bg-brand-primary/5 dark:bg-brand-primary/10' : 'border-border dark:border-dark-border bg-card dark:bg-dark-card'}`}>
+                            <button
+                                onClick={() => toggleItineraryDay(item.day)}
+                                className="w-full flex justify-between items-center p-5 text-left focus:outline-none group"
+                                aria-expanded={isOpen}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <span className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-300 ${isOpen ? 'bg-brand-primary border-brand-primary text-white' : 'bg-transparent border-muted-foreground text-muted-foreground group-hover:border-brand-primary group-hover:text-brand-primary'}`}>
+                                        {isOpen ? <MinusIcon className="w-5 h-5" /> : <PlusIcon className="w-5 h-5" />}
+                                    </span>
+                                    <div>
+                                        <span className={`text-xs font-bold uppercase tracking-wider ${isOpen ? 'text-brand-primary' : 'text-muted-foreground dark:text-dark-muted-foreground'}`}>Day {item.day}</span>
+                                        <h3 className={`font-semibold text-lg ${isOpen ? 'text-foreground dark:text-dark-foreground' : 'text-foreground dark:text-dark-foreground'}`}>{item.title}</h3>
+                                    </div>
+                                </div>
+                            </button>
+                            <div 
+                                className={`grid transition-[grid-template-rows] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                            >
+                                <div className="overflow-hidden">
+                                    <div className="px-5 pb-5 pt-0 pl-[4.5rem] text-muted-foreground dark:text-dark-muted-foreground leading-relaxed">
+                                        {item.description}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
 

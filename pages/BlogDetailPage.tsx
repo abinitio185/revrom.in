@@ -1,5 +1,7 @@
+
 import React from 'react';
 import type { BlogPost } from '../types';
+import SEOHead from '../components/SEOHead';
 
 interface BlogDetailPageProps {
   post: BlogPost;
@@ -19,8 +21,17 @@ const UserIcon: React.FC<{className?: string}> = ({ className }) => (
 );
 
 const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ post, onBack }) => {
+  
   return (
     <div className="bg-background dark:bg-dark-background">
+      <SEOHead 
+        title={post.seo?.title || `${post.title} | Revrom.in`} 
+        description={post.seo?.description || post.excerpt} 
+        keywords={post.seo?.keywords}
+        image={post.seo?.ogImage || post.imageUrl}
+        type="article"
+      />
+
       <div className="relative h-72 sm:h-96 bg-cover bg-center" style={{ backgroundImage: `url(${post.imageUrl})` }}>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-4 sm:px-6 h-full flex flex-col justify-end pb-8 md:pb-12 relative z-10">

@@ -307,7 +307,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
         }
     };
     const currentCoords = useMemo(() => (modal === 'TRIP' && typeof formData.routeCoordinates === 'string') ? parseCoordinatesFromString(formData.routeCoordinates) : [], [modal, formData.routeCoordinates]);
-    const textContentEntries = Object.entries(siteContentData).filter(([key]) => !['logoUrl', 'activeTheme', 'customThemeColors', 'homePageLayout', 'globalSeo'].includes(key));
+    const textContentEntries = Object.entries(siteContentData).filter(([key]) => !['logoUrl', 'activeTheme', 'customThemeColors', 'homePageLayout', 'globalSeo', 'instagramUrl', 'facebookUrl', 'youtubeUrl', 'googleReviewsUrl', 'adminWhatsappNumber', 'contactEmail', 'contactPhone', 'contactAddress', 'footerTagline'].includes(key));
     
     const navItems = [
         { id: 'tours', label: 'Tours & Departures', icon: <ToursIcon /> },
@@ -512,9 +512,10 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                 </div>
             );
             case 'settings': return (
+                <div className="space-y-8">
                 <Section title="Global Settings">
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                        <div className="md:col-span-2">
                              <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-2">Website Logo</label>
                              <div className="flex items-center gap-4">
                                  <div className="h-16 w-16 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center border border-border dark:border-dark-border overflow-hidden">
@@ -541,7 +542,13 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                                  </div>
                              </div>
                         </div>
-                        <div className="flex flex-col justify-center">
+                        
+                        <div className="md:col-span-2">
+                             <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Footer Tagline</label>
+                             <textarea name="footerTagline" value={siteContentData.footerTagline} onChange={handleSiteContentChange} rows={2} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" placeholder="Unforgettable Motorcycle Adventures..." />
+                        </div>
+
+                        <div>
                              <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-2">Visual Theme</label>
                              <div className="flex items-center gap-4">
                                  <div className="text-sm font-semibold px-3 py-1.5 bg-card dark:bg-dark-card border border-border dark:border-dark-border rounded">
@@ -555,9 +562,39 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                              <input type="text" name="adminWhatsappNumber" value={siteContentData.adminWhatsappNumber} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
                              <p className="text-xs text-muted-foreground dark:text-dark-muted-foreground mt-1">For receiving booking inquiries (no spaces, e.g. 919876543210)</p>
                         </div>
+                     </div>
+                </Section>
+
+                <Section title="Contact Information">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Contact Email</label>
+                            <input type="email" name="contactEmail" value={siteContentData.contactEmail} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Contact Phone</label>
+                            <input type="text" name="contactPhone" value={siteContentData.contactPhone} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Physical Address</label>
+                            <input type="text" name="contactAddress" value={siteContentData.contactAddress} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
+                        </div>
+                     </div>
+                </Section>
+
+                <Section title="Social Media Links">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Instagram URL</label>
                              <input type="text" name="instagramUrl" value={siteContentData.instagramUrl} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Facebook URL</label>
+                             <input type="text" name="facebookUrl" value={siteContentData.facebookUrl || ''} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">YouTube URL</label>
+                             <input type="text" name="youtubeUrl" value={siteContentData.youtubeUrl || ''} onChange={handleSiteContentChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border focus:ring-brand-primary focus:border-brand-primary" />
                         </div>
                          <div>
                             <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground mb-1">Google Reviews URL</label>
@@ -568,6 +605,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                          <button onClick={handleSaveSiteContent} className="bg-brand-primary hover:bg-brand-primary-dark text-white px-8 py-3 rounded font-bold text-lg shadow-md">Save All Settings</button>
                      </div>
                 </Section>
+                </div>
             );
         }
     };
@@ -591,7 +629,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-muted-foreground dark:text-dark-muted-foreground">OG Image URL</label>
-                    <input type="text" name="seo.ogImage" value={formData.seo?.ogImage || ''} onChange={handleFormChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border" placeholder="https://example.com/image.jpg" />
+                    <input type="text" name="seo.ogImage" value={formData.seo?.ogImage || ''} onChange={handleFormChange} className="w-full p-2 border rounded bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-border dark:border-dark-border" placeholder="https://example.com/image.jpg (Optional override)" />
                 </div>
             </div>
         </div>

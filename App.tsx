@@ -304,7 +304,7 @@ const App: React.FC = () => {
       case 'booking':
         return selectedTrip && <BookingPage trip={selectedTrip} onBack={handleBackToDetail} />;
       case 'contact':
-        return <ContactPage />;
+        return <ContactPage siteContent={siteContent} />;
       case 'blog':
         return <BlogPage posts={blogPosts} onSelectPost={handleSelectBlogPost} />;
       case 'blogDetail':

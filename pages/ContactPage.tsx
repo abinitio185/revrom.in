@@ -1,4 +1,10 @@
+
 import React, { useState } from 'react';
+import type { SiteContent } from '../types';
+
+interface ContactPageProps {
+    siteContent: SiteContent;
+}
 
 const MailIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
@@ -26,7 +32,7 @@ const CheckCircleIcon: React.FC<{className?: string}> = ({ className }) => (
 );
 
 
-const ContactPage: React.FC = () => {
+const ContactPage: React.FC<ContactPageProps> = ({ siteContent }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
@@ -138,21 +144,21 @@ const ContactPage: React.FC = () => {
                                     <MailIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
                                         <h4 className="font-semibold text-foreground dark:text-dark-foreground">Email</h4>
-                                        <a href="mailto:contact@revrom.in" className="hover:text-brand-primary-dark">contact@revrom.in</a>
+                                        <a href={`mailto:${siteContent.contactEmail}`} className="hover:text-brand-primary-dark break-all">{siteContent.contactEmail}</a>
                                     </div>
                                 </li>
                                  <li className="flex items-start">
                                     <PhoneIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
                                         <h4 className="font-semibold text-foreground dark:text-dark-foreground">Phone</h4>
-                                        <span>+91 987 654 3210</span>
+                                        <span>{siteContent.contactPhone}</span>
                                     </div>
                                 </li>
                                  <li className="flex items-start">
                                     <LocationIcon className="w-6 h-6 text-brand-primary mr-3 mt-1 shrink-0" />
                                     <div>
                                         <h4 className="font-semibold text-foreground dark:text-dark-foreground">Address</h4>
-                                        <p>Fort Road, Leh, Ladakh, 194101, India</p>
+                                        <p>{siteContent.contactAddress}</p>
                                     </div>
                                 </li>
                             </ul>

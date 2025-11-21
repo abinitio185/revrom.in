@@ -145,14 +145,28 @@ export interface SiteContent {
     gallerySubtitle: string;
     instagramTitle: string;
     instagramSubtitle: string;
+    
+    // Social Media Links
     instagramUrl: string;
+    facebookUrl: string;
+    youtubeUrl: string;
     googleReviewsUrl: string;
+    
+    // Contact Info
     adminWhatsappNumber: string;
+    contactEmail: string;
+    contactPhone: string;
+    contactAddress: string;
+
+    // Footer/Branding
     logoUrl: string;
+    footerTagline: string;
+
+    // Theme & Layout
     activeTheme: string;
     customThemeColors: ThemeColors;
-    // New Fields for Builder
     homePageLayout: SectionConfig[];
+    
     // Global SEO
     globalSeo?: SEOConfig;
 }

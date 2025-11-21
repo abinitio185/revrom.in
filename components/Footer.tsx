@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { SiteContent } from '../types';
 
@@ -45,7 +46,7 @@ const Footer: React.FC<FooterProps> = ({
           <div className="col-span-2 lg:col-span-2">
             <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto mb-4" />
             <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground">
-              Unforgettable Motorcycle Adventures in the Heart of the Himalayas.
+              {siteContent.footerTagline || "Unforgettable Motorcycle Adventures in the Heart of the Himalayas."}
             </p>
           </div>
           <div>
@@ -79,15 +80,21 @@ const Footer: React.FC<FooterProps> = ({
           <div>
             <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Connect</h4>
             <div className="flex space-x-4 text-muted-foreground dark:text-dark-muted-foreground">
-              <a href="#" aria-label="Facebook" className="hover:text-brand-primary transition-colors">
-                <FacebookIcon className="w-6 h-6" />
-              </a>
-              <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-brand-primary transition-colors">
-                <InstagramIcon className="w-6 h-6" />
-              </a>
-              <a href="#" aria-label="YouTube" className="hover:text-brand-primary transition-colors">
-                <YouTubeIcon className="w-6 h-6" />
-              </a>
+              {siteContent.facebookUrl && (
+                  <a href={siteContent.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-brand-primary transition-colors">
+                    <FacebookIcon className="w-6 h-6" />
+                  </a>
+              )}
+              {siteContent.instagramUrl && (
+                  <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-brand-primary transition-colors">
+                    <InstagramIcon className="w-6 h-6" />
+                  </a>
+              )}
+              {siteContent.youtubeUrl && (
+                  <a href={siteContent.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-brand-primary transition-colors">
+                    <YouTubeIcon className="w-6 h-6" />
+                  </a>
+              )}
             </div>
           </div>
         </div>

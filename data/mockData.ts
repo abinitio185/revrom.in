@@ -38,7 +38,7 @@ export const trips: Trip[] = [
     route: 'Manali - Jispa - Sarchu - Leh - Srinagar',
     routeCoordinates: [[32.24, 77.18], [32.65, 77.20], [33.09, 77.58], [34.16, 77.57], [34.28, 77.60], [33.75, 78.65], [34.16, 77.57], [34.28, 76.88], [34.55, 76.13], [34.08, 74.79]],
     reviews: [
-      { name: 'Alex R.', rating: 5, comment: 'An absolutely life-changing experience. The views were surreal and the Royal Enfield was a dream to ride. The team took care of everything. Highly recommended!', date: '2024-06-15' },
+      { name: 'Alex R.', rating: 5, comment: 'An absolutely life-changing experience. The views were surreal and the Royal Enfield was a dream to ride. The team was quite nice. Highly recommended!', date: '2024-06-15' },
       { name: 'Samantha B.', rating: 4, comment: 'Incredible journey, but be prepared for the altitude! The roads are challenging but rewarding. The support crew was fantastic.', date: '2024-06-20' },
     ],
     seo: {
@@ -133,7 +133,7 @@ export const trips: Trip[] = [
     id: 'zanskar-forbidden-kingdom',
     title: 'The Forbidden Kingdom of Zanskar',
     destination: 'Zanskar, India',
-    shortDescription: 'An extreme adventure into the isolated and rugged Zanskar valley, a true test of a rider\'s spirit.',
+    shortDescription: 'An adventurous ride into the isolated and rugged Zanskar valley, a true test of a rider\'s spirit.',
     longDescription: '### Venture into the Last True Himalayan Kingdom\n\nThis is not just a tour; it\'s an expedition. Zanskar, one of the most remote regions in the Himalayas, is a land of stark beauty, ancient monasteries, and the famous double-humped Bactrian camels.\n\n#### Expedition Highlights\n* **Extreme Remoteness:** Traverse one of the most isolated regions on the planet.\n* **Pensi La Pass:** Conquer the gateway to Zanskar with stunning views of the Drang-Drung Glacier.\n* **Cliffside Monasteries:** Witness the architectural marvels of Phugtal and Karsha monasteries.\n* **Ultimate Challenge:** A demanding route for experienced riders seeking the ultimate adventure.',
     duration: 14,
     price: 315000,
@@ -288,7 +288,13 @@ export const blogPosts: BlogPost[] = [
         date: '2024-05-20',
         imageUrl: 'https://picsum.photos/seed/ladakh-blog1/800/600',
         excerpt: 'Ladakh is not just about thrilling roads; it\'s a land of deep spiritual heritage. Discover the most breathtaking monasteries that you cannot miss on your journey.',
-        content: 'Ladakh, often called "Little Tibet", is renowned for its stunning monasteries or "gompas". Perched on hilltops, these centers of Buddhist learning offer peace and spectacular views. Here are our top 5 picks:\n\n**1. Thiksey Monastery:** Affiliated with the Gelug sect of Tibetan Buddhism, it is noted for its resemblance to the Potala Palace in Lhasa, Tibet. The 12-story complex houses many items of Buddhist art such as stupas, statues, thangkas, wall paintings and swords.\n\n**2. Hemis Monastery:** The wealthiest monastery in Ladakh, Hemis is famous for its annual Hemis festival honoring Padmasambhava. It\'s a must-visit for its rich collection of ancient relics.\n\n**3. Diskit Monastery:** Located in the beautiful Nubra Valley, Diskit is the oldest and largest monastery in the region. The highlight is the 32-meter tall statue of Maitreya Buddha, which offers panoramic views of the valley.\n\n**4. Alchi Monastery:** Situated on the banks of the Indus River, Alchi is unique for its flat-ground location and magnificent Kashmiri-influenced wall paintings, some of which date back to the 11th century.\n\n**5. Lamayuru Monastery:** One of the oldest monasteries, Lamayuru is famous for its "moonland" landscape. The monastery is home to around 150 monks and features a rich collection of thangkas and artifacts.'
+        content: 'Ladakh, often called "Little Tibet", is renowned for its stunning monasteries or "gompas". Perched on hilltops, these centers of Buddhist learning offer peace and spectacular views. Here are our top 5 picks:\n\n**1. Thiksey Monastery:** Affiliated with the Gelug sect of Tibetan Buddhism, it is noted for its resemblance to the Potala Palace in Lhasa, Tibet. The 12-story complex houses many items of Buddhist art such as stupas, statues, thangkas, wall paintings and swords.\n\n**2. Hemis Monastery:** The wealthiest monastery in Ladakh, Hemis is famous for its annual Hemis festival honoring Padmasambhava. It\'s a must-visit for its rich collection of ancient relics.\n\n**3. Diskit Monastery:** Located in the beautiful Nubra Valley, Diskit is the oldest and largest monastery in the region. The highlight is the 32-meter tall statue of Maitreya Buddha, which offers panoramic views of the valley.\n\n**4. Alchi Monastery:** Situated on the banks of the Indus River, Alchi is unique for its flat-ground location and magnificent Kashmiri-influenced wall paintings, some of which date back to the 11th century.\n\n**5. Lamayuru Monastery:** One of the oldest monasteries, Lamayuru is famous for its "moonland" landscape. The monastery is home to around 150 monks and features a rich collection of thangkas and artifacts.',
+        seo: {
+            title: 'Top 5 Must-Visit Monasteries in Ladakh | Cultural Guide',
+            description: 'Explore the spiritual heritage of Ladakh. Guide to Thiksey, Hemis, Diskit, Alchi, and Lamayuru monasteries.',
+            keywords: 'ladakh monasteries, thiksey monastery, hemis festival, diskit nubra, buddhist culture',
+            ogImage: 'https://picsum.photos/seed/ladakh-blog1/1200/630'
+        }
     },
     {
         id: 'blog-2',
@@ -297,7 +303,13 @@ export const blogPosts: BlogPost[] = [
         date: '2024-06-02',
         imageUrl: 'https://picsum.photos/seed/ladakh-blog2/800/600',
         excerpt: 'High altitude can be a challenge. Learn the essential tips for proper acclimatization to ensure your Ladakh motorcycle tour is safe and enjoyable.',
-        content: 'Riding in Ladakh means dealing with altitudes often exceeding 3,500 meters (11,500 feet). Acute Mountain Sickness (AMS) is a real risk. Here’s how to minimize it:\n\n**1. Go Slow:** Your first day in Leh should be all about rest. Avoid strenuous activity. Let your body adjust.\n\n**2. Hydrate, Hydrate, Hydrate:** Drink plenty of water, at least 3-4 liters a day. Avoid alcohol and caffeine as they can dehydrate you.\n\n**3. Eat Well:** Consume a high-carbohydrate diet. It helps your body use oxygen more efficiently.\n\n**4. Ascend Gradually:** Plan your itinerary to include gradual ascent. Never ascend more than 500 meters per day to sleep.\n\n**5. Know the Symptoms:** Headaches, dizziness, nausea, and shortness of breath are early signs of AMS. If you feel them, do not ascend further. Rest, and if they persist, descend.\n\nBy taking these precautions, you can enjoy the majestic beauty of Ladakh without compromising your health.'
+        content: 'Riding in Ladakh means dealing with altitudes often exceeding 3,500 meters (11,500 feet). Acute Mountain Sickness (AMS) is a real risk. Here’s how to minimize it:\n\n**1. Go Slow:** Your first day in Leh should be all about rest. Avoid strenuous activity. Let your body adjust.\n\n**2. Hydrate, Hydrate, Hydrate:** Drink plenty of water, at least 3-4 liters a day. Avoid alcohol and caffeine as they can dehydrate you.\n\n**3. Eat Well:** Consume a high-carbohydrate diet. It helps your body use oxygen more efficiently.\n\n**4. Ascend Gradually:** Plan your itinerary to include gradual ascent. Never ascend more than 500 meters per day to sleep.\n\n**5. Know the Symptoms:** Headaches, dizziness, nausea, and shortness of breath are early signs of AMS. If you feel them, do not ascend further. Rest, and if they persist, descend.\n\nBy taking these precautions, you can enjoy the majestic beauty of Ladakh without compromising your health.',
+        seo: {
+            title: 'Acclimatization Tips for Ladakh Motorcycle Trips',
+            description: 'Essential guide to preventing AMS (Acute Mountain Sickness) while riding in high-altitude Ladakh.',
+            keywords: 'ladakh acclimatization, ams prevention, high altitude riding, leh ladakh health tips',
+            ogImage: 'https://picsum.photos/seed/ladakh-blog2/1200/630'
+        }
     },
     {
         id: 'blog-3',
@@ -306,7 +318,13 @@ export const blogPosts: BlogPost[] = [
         date: '2024-06-18',
         imageUrl: 'https://picsum.photos/seed/ladakh-blog3/800/600',
         excerpt: 'What to pack and what to leave behind? Our ultimate checklist, forged from years of experience, will help you prepare for the ride of a lifetime.',
-        content: 'Packing right is crucial for a successful Ladakh trip. The weather can be unpredictable. Here’s a quick guide:\n\n**Riding Gear (Non-negotiable):**\n- Full-face helmet\n- Armored riding jacket and pants\n- Sturdy, over-the-ankle riding boots\n- Riding gloves (consider both summer and thermal pairs)\n\n**Clothing:**\n- Thermal base layers\n- Fleece or down mid-layer\n- T-shirts and comfortable pants for evenings\n- Woolen socks\n\n**Essentials:**\n- Sunscreen (SPF 50+)\n- Sunglasses (UV protection)\n- Lip balm with SPF\n- Personal first-aid kit with medication for AMS (consult your doctor)\n- Reusable water bottle\n\nRemember, layering is key. It allows you to adapt to the changing temperatures throughout the day.'
+        content: 'Packing right is crucial for a successful Ladakh trip. The weather can be unpredictable. Here’s a quick guide:\n\n**Riding Gear (Non-negotiable):**\n- Full-face helmet\n- Armored riding jacket and pants\n- Sturdy, over-the-ankle riding boots\n- Riding gloves (consider both summer and thermal pairs)\n\n**Clothing:**\n- Thermal base layers\n- Fleece or down mid-layer\n- T-shirts and comfortable pants for evenings\n- Woolen socks\n\n**Essentials:**\n- Sunscreen (SPF 50+)\n- Sunglasses (UV protection)\n- Lip balm with SPF\n- Personal first-aid kit with medication for AMS (consult your doctor)\n- Reusable water bottle\n\nRemember, layering is key. It allows you to adapt to the changing temperatures throughout the day.',
+        seo: {
+            title: 'Ultimate Packing List for Ladakh Motorcycle Tours',
+            description: 'Complete checklist of riding gear, clothing, and essentials for your Ladakh bike trip. Don\'t leave home without these.',
+            keywords: 'ladakh packing list, motorcycle touring gear, riding gear for himalayas, ladakh essentials',
+            ogImage: 'https://picsum.photos/seed/ladakh-blog3/1200/630'
+        }
     },
 ];
 
@@ -435,10 +453,23 @@ export const siteContent: SiteContent = {
     gallerySubtitle: "A glimpse into the breathtaking landscapes and unforgettable moments from our tours.",
     instagramTitle: "Follow Our Adventures",
     instagramSubtitle: "Join our community on Instagram for live stories, reels, and rider features from the road.",
+    
+    // Social Media Defaults
     instagramUrl: "https://www.instagram.com/revrom.in",
+    facebookUrl: "https://www.facebook.com/revrom.in",
+    youtubeUrl: "https://www.youtube.com/@revrom.in",
     googleReviewsUrl: "https://www.google.com/maps/search/?api=1&query=Google&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4",
+    
+    // Contact Info Defaults
     adminWhatsappNumber: "919876543210",
+    contactEmail: "contact@revrom.in",
+    contactPhone: "+91 987 654 3210",
+    contactAddress: "Fort Road, Leh, Ladakh, 194101, India",
+
+    // Footer/Brand Defaults
     logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAABFCAMAAAC3zTykAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURf///87Ozv///83NzbS0tAC53v4AAAMESURBVGFjYIAEAAAA//8AIAABAAAAAADgIQNuAACBlAX+iIAnAAAAAElFTkSuQmCC",
+    footerTagline: "Unforgettable Motorcycle Adventures in the Heart of the Himalayas.",
+    
     activeTheme: 'Default',
     customThemeColors: themes.find(t => t.name === 'Default')!.colors as ThemeColors,
     homePageLayout: [

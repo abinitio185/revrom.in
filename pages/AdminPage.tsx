@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery, CustomPage, SectionConfig, SEOConfig } from '../types';
+import type { Trip, Departure, BlogPost, GalleryPhoto, InstagramPost, GoogleReview, SiteContent, ItineraryQuery, CustomPage } from '../types';
 import type { Theme } from '../App';
 import { instagramSyncMock } from '../data/mockData';
-import TripRouteMap from '../components/TripRouteMap';
-import Pagination from '../components/Pagination';
 import ThemePicker from '../components/ThemePicker';
 import { themes } from '../data/themes';
 
@@ -69,7 +67,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
     siteContent, itineraryQueries, customPages,
     onAddTrip, onUpdateTrip, onDeleteTrip, 
     onAddDeparture, onUpdateDeparture, onDeleteDeparture,
-    onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost,
+    onUpdateBlogPost, onDeleteBlogPost,
     onAddGalleryPhoto, onUpdateGalleryPhoto, onDeleteGalleryPhoto,
     onAddInstagramPost, onUpdateInstagramPost, onDeleteInstagramPost,
     onAddGoogleReview, onUpdateGoogleReview, onDeleteGoogleReview,
@@ -84,6 +82,14 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
   const [editingDeparture, setEditingDeparture] = useState<Departure | null>(null);
   const [isThemePickerOpen, setIsThemePickerOpen] = useState(false);
   
+  // Advanced Logo Management States
+  const [originalLogoBase64, setOriginalLogoBase64] = useState<string | null>(null);
+  const [logoToCrop, setLogoToCrop] = useState<string | null>(null);
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [cropZoom, setCropZoom] = useState(1);
+  const [cropOffset, setCropOffset] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   // Site Settings Logic
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       const { name, value, type } = e.target;
@@ -94,15 +100,57 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
       }
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
-            onUpdateSiteContent({ logoUrl: reader.result as string });
+            const result = reader.result as string;
+            setOriginalLogoBase64(result);
+            setLogoToCrop(result);
+            setCropZoom(1);
+            setCropOffset({ x: 0, y: 0 });
+            setIsCropModalOpen(true);
         };
         reader.readAsDataURL(file);
     }
+  };
+
+  const handleReEditCrop = () => {
+    if (originalLogoBase64) {
+        setLogoToCrop(originalLogoBase64);
+        setIsCropModalOpen(true);
+    }
+  };
+
+  const handleApplyCrop = () => {
+    if (!canvasRef.current || !logoToCrop) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const img = new Image();
+    img.src = logoToCrop;
+    img.onload = () => {
+        const targetWidth = 600; // Optimal resolution for branding
+        const targetHeight = 200; // Optimal resolution for branding
+        
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const drawWidth = img.width * cropZoom;
+        const drawHeight = img.height * cropZoom;
+        
+        const x = (targetWidth / 2) - (drawWidth / 2) + cropOffset.x;
+        const y = (targetHeight / 2) - (drawHeight / 2) + cropOffset.y;
+        
+        ctx.drawImage(img, x, y, drawWidth, drawHeight);
+        
+        const finalDataUrl = canvas.toDataURL('image/png', 1.0);
+        onUpdateSiteContent({ logoUrl: finalDataUrl });
+        setIsCropModalOpen(false);
+    };
   };
 
   const handleInstagramSync = () => {
@@ -113,16 +161,13 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
     alert('Instagram content synchronized successfully!');
   };
 
-  // HomePage Layout Logic
   const moveSection = (index: number, direction: 'up' | 'down') => {
       const newLayout = [...siteContent.homePageLayout];
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
       if (targetIndex < 0 || targetIndex >= newLayout.length) return;
-      
       const temp = newLayout[index];
       newLayout[index] = newLayout[targetIndex];
       newLayout[targetIndex] = temp;
-      
       onUpdateSiteContent({ homePageLayout: newLayout });
   };
 
@@ -351,43 +396,73 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                   </h4>
                   <div className="space-y-6">
                       <div className="bg-slate-50 dark:bg-dark-background/50 p-6 rounded-xl border border-border dark:border-dark-border">
-                          <label className="block text-sm font-bold mb-3 text-foreground dark:text-dark-foreground uppercase tracking-wider">Logo Configuration</label>
-                          <div className="flex flex-col sm:flex-row items-center gap-6">
-                              <div className="h-24 w-24 bg-card dark:bg-dark-card rounded-xl border-2 border-dashed border-border dark:border-dark-border flex items-center justify-center p-2 relative group overflow-hidden shrink-0">
+                          <label className="block text-sm font-bold mb-4 text-foreground dark:text-dark-foreground uppercase tracking-wider">Logo Configuration</label>
+                          
+                          {/* Instructions Panel */}
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800 mb-6 text-xs space-y-2">
+                              <p className="font-bold text-blue-800 dark:text-blue-300">💡 Optimization Guide:</p>
+                              <ul className="list-disc list-inside text-blue-700 dark:text-blue-400 space-y-1">
+                                  <li>Recommended Format: **SVG** (Infinite sharpness) or **PNG**.</li>
+                                  <li>Transparency: Use images with transparent backgrounds for clean headers.</li>
+                                  <li>Ideal Dimensions: ~400px width with 3:1 or 4:1 aspect ratio.</li>
+                              </ul>
+                          </div>
+
+                          <div className="flex flex-col items-center gap-6">
+                              <div className="w-full bg-card dark:bg-dark-card rounded-xl border-2 border-dashed border-border dark:border-dark-border flex flex-col items-center justify-center p-8 relative group overflow-hidden shadow-inner min-h-[160px]">
+                                  {/* Transparency Grid Pattern */}
+                                  <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)', backgroundSize: '16px 16px', backgroundPosition: '0 0, 8px 8px' }}></div>
+                                  
                                   {siteContent.logoUrl ? (
-                                      <img src={siteContent.logoUrl} alt="Preview" className="max-h-full max-w-full object-contain" />
+                                      <div className="relative group">
+                                          <img src={siteContent.logoUrl} alt="Active Logo" className="max-h-24 w-auto object-contain transition-all" />
+                                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded transition-opacity">
+                                              <span className="text-white text-[10px] font-bold uppercase tracking-widest">Active Branding</span>
+                                          </div>
+                                      </div>
                                   ) : (
-                                      <span className="text-muted-foreground text-[10px] text-center">No Logo Uploaded</span>
+                                      <div className="text-center py-4 relative">
+                                          <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                          <p className="mt-2 text-xs text-muted-foreground">No Logo Uploaded</p>
+                                      </div>
                                   )}
                               </div>
-                              <div className="flex-grow space-y-3 w-full">
+                              <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
                                   <input 
                                       type="file" 
                                       id="logo-upload-input" 
                                       accept="image/*" 
-                                      onChange={handleLogoUpload} 
+                                      onChange={handleLogoSelect} 
                                       className="hidden" 
                                   />
                                   <label 
                                       htmlFor="logo-upload-input" 
-                                      className="cursor-pointer block w-full text-center bg-brand-primary text-white font-bold py-2.5 px-4 rounded-lg hover:bg-brand-primary-dark transition-all shadow-md active:scale-95"
+                                      className="cursor-pointer block w-full text-center bg-brand-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-brand-primary-dark transition-all shadow-md active:scale-95"
                                   >
-                                      Select Logo Image
+                                      Upload New
                                   </label>
-                                  <p className="text-[10px] text-muted-foreground text-center sm:text-left">Transparent PNG or SVG recommended. Max size 2MB.</p>
+                                  <button 
+                                      type="button"
+                                      disabled={!originalLogoBase64}
+                                      onClick={handleReEditCrop}
+                                      className="w-full text-center bg-slate-200 dark:bg-slate-700 text-foreground dark:text-dark-foreground font-bold py-3 px-4 rounded-lg hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                  >
+                                      Re-edit Crop
+                                  </button>
                               </div>
                           </div>
+                          
                           <div className="mt-8 space-y-4">
                               <div>
                                   <div className="flex justify-between items-center mb-2">
-                                      <label className="text-sm font-semibold">Pixel Adjustment Height</label>
+                                      <label className="text-sm font-semibold">Live Header Height Sync</label>
                                       <span className="text-xs font-mono font-bold bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded">{siteContent.logoHeight}px</span>
                                   </div>
                                   <input 
                                       type="range" 
                                       name="logoHeight" 
-                                      min="20" 
-                                      max="150" 
+                                      min="24" 
+                                      max="120" 
                                       value={siteContent.logoHeight} 
                                       onChange={handleSettingsChange} 
                                       className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-primary" 
@@ -472,7 +547,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
               <div>
                   <div className="flex items-center gap-3 mb-1">
-                      <span className="bg-brand-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Administrator</span>
+                      <span className="bg-brand-primary text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest text-shadow-sm">Administrator</span>
                       <h1 className="text-3xl md:text-4xl font-extrabold font-display text-foreground dark:text-dark-foreground">Hub Console</h1>
                   </div>
                   <p className="text-muted-foreground text-sm">Welcome back. Manage your tours, content, and site configuration here.</p>
@@ -488,7 +563,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                   <button 
                     key={tab} 
                     onClick={() => setActiveTab(tab)}
-                    className={`flex items-center gap-2 px-6 py-4 font-bold transition-all whitespace-nowrap border-b-4 ${activeTab === tab ? 'border-brand-primary text-brand-primary' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-dark-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+                    className={`flex items-center gap-2 px-6 py-4 font-bold transition-all whitespace-nowrap border-b-4 ${activeTab === tab ? 'border-brand-primary text-brand-primary bg-brand-primary/5' : 'border-transparent text-muted-foreground hover:text-foreground dark:hover:text-dark-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
                   >
                       {tab === 'Tours' && <ToursIcon />}
                       {tab === 'Content' && <ContentIcon />}
@@ -501,7 +576,6 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
               ))}
           </div>
 
-          {/* Dynamic Tab Content */}
           <div className="pb-24">
               {activeTab === 'Tours' && renderToursTab()}
               {activeTab === 'Content' && renderContentTab()}
@@ -539,12 +613,98 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
           </div>
       </div>
 
-      {/* --- MODALS --- */}
+      {/* Logo Cropper Modal */}
+      {isCropModalOpen && logoToCrop && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+              <div className="bg-card dark:bg-dark-card rounded-2xl shadow-2xl max-w-3xl w-full border border-border dark:border-dark-border overflow-hidden animate-scale-in">
+                  <div className="p-6 border-b border-border dark:border-dark-border flex justify-between items-center">
+                      <h3 className="text-xl font-bold font-display">Refine Brand Identity</h3>
+                      <button onClick={() => setIsCropModalOpen(false)} className="text-muted-foreground hover:text-foreground text-3xl font-light">&times;</button>
+                  </div>
+                  <div className="p-8">
+                      <div className="relative w-full aspect-[3/1] bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-inner group">
+                          {/* Transparency Grid Pattern */}
+                          <div className="absolute inset-0 opacity-[0.1] pointer-events-none" style={{ backgroundImage: 'linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 10px 10px' }}></div>
+                          
+                          {/* Interactive Area */}
+                          <div 
+                            className="absolute cursor-move transition-transform duration-75"
+                            style={{ 
+                                transform: `translate(${cropOffset.x}px, ${cropOffset.y}px) scale(${cropZoom})`,
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-100px',
+                                marginLeft: '-300px'
+                            }}
+                            onMouseDown={(e) => {
+                                const startX = e.clientX - cropOffset.x;
+                                const startY = e.clientY - cropOffset.y;
+                                const handleMouseMove = (moveEvent: MouseEvent) => {
+                                    setCropOffset({
+                                        x: moveEvent.clientX - startX,
+                                        y: moveEvent.clientY - startY
+                                    });
+                                };
+                                const handleMouseUp = () => {
+                                    document.removeEventListener('mousemove', handleMouseMove);
+                                    document.removeEventListener('mouseup', handleMouseUp);
+                                };
+                                document.addEventListener('mousemove', handleMouseMove);
+                                document.addEventListener('mouseup', handleMouseUp);
+                            }}
+                          >
+                            <img src={logoToCrop} className="max-w-none w-[600px] h-auto pointer-events-none select-none" alt="To Crop" />
+                          </div>
+
+                          {/* Overlay Guide */}
+                          <div className="absolute inset-0 pointer-events-none border-2 border-brand-primary opacity-30"></div>
+                          <div className="absolute inset-x-0 top-1/2 -translate-y-px border-b border-white/20"></div>
+                          <div className="absolute inset-y-0 left-1/2 -translate-x-px border-l border-white/20"></div>
+                          
+                          <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm">Drag to Pan • Resize below</div>
+                      </div>
+
+                      <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                          <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                  <span className="text-xs font-bold uppercase text-muted-foreground tracking-widest">Logo Zoom</span>
+                                  <span className="text-xs font-mono font-bold text-brand-primary">{Math.round(cropZoom * 100)}%</span>
+                              </div>
+                              <input 
+                                type="range" 
+                                min="0.1" 
+                                max="5" 
+                                step="0.01" 
+                                value={cropZoom} 
+                                onChange={(e) => setCropZoom(parseFloat(e.target.value))} 
+                                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-primary" 
+                              />
+                          </div>
+                          
+                          <div className="flex justify-end gap-3">
+                            <button 
+                                onClick={() => { setCropOffset({ x: 0, y: 0 }); setCropZoom(1); }} 
+                                className="text-xs font-bold text-slate-600 bg-slate-100 px-4 py-2.5 rounded-lg hover:bg-slate-200 transition-colors"
+                            >
+                                Reset To Center
+                            </button>
+                          </div>
+                      </div>
+                  </div>
+                  <div className="p-6 bg-slate-50 dark:bg-dark-background/50 border-t border-border dark:border-dark-border flex justify-end gap-3">
+                      <button onClick={() => setIsCropModalOpen(false)} className="px-6 py-2 font-bold text-muted-foreground hover:text-foreground">Discard</button>
+                      <button onClick={handleApplyCrop} className="bg-brand-primary text-white px-10 py-3 rounded-lg font-bold shadow-xl hover:bg-brand-primary-dark transition-all transform active:scale-95">Save Framed Logo</button>
+                  </div>
+                  {/* Hidden Canvas for High-Fidelity Processing */}
+                  <canvas ref={canvasRef} className="hidden" />
+              </div>
+          </div>
+      )}
 
       {/* Trip Modal */}
       {isTripModalOpen && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto" onClick={() => setIsTripModalOpen(false)}>
-              <div className="bg-card dark:bg-dark-card rounded-2xl shadow-2xl max-w-4xl w-full my-auto border border-border dark:border-dark-border" onClick={e => e.stopPropagation()}>
+              <div className="bg-card dark:bg-dark-card rounded-2xl shadow-2xl max-w-4xl w-full my-auto border border-border dark:border-dark-border animate-scale-in" onClick={e => e.stopPropagation()}>
                   <div className="p-6 border-b border-border dark:border-dark-border flex justify-between items-center">
                       <h3 className="text-2xl font-bold font-display">{editingTrip ? 'Modify' : 'Launch New'} Tour</h3>
                       <button onClick={() => setIsTripModalOpen(false)} className="text-muted-foreground hover:text-foreground">&times;</button>
@@ -596,9 +756,6 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                            <textarea name="shortDescription" placeholder="Teaser Text (Short)" defaultValue={editingTrip?.shortDescription} rows={2} required className="w-full p-3 bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-lg text-sm mb-4" />
                            <textarea name="longDescription" placeholder="Full Itinerary / Story Description (Markdown supported)" defaultValue={editingTrip?.longDescription} rows={8} className="w-full p-3 bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-lg text-sm" />
                       </div>
-                      <div className="md:col-span-2">
-                          <input name="route" placeholder="Route Summary (e.g. Leh - Nubra - Pangong)" defaultValue={editingTrip?.route} className="w-full p-3 bg-background dark:bg-dark-background border border-border dark:border-dark-border rounded-lg text-sm" />
-                      </div>
                       <div className="md:col-span-2 flex justify-end gap-3 pt-6 border-t border-border dark:border-dark-border">
                           <button type="button" onClick={() => setIsTripModalOpen(false)} className="px-6 py-2 text-muted-foreground font-bold hover:text-foreground">Discard</button>
                           <button type="submit" className="bg-brand-primary text-white px-10 py-2 rounded-lg font-bold hover:bg-brand-primary-dark shadow-xl">Confirm Product</button>
@@ -611,7 +768,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
       {/* Departure Modal */}
       {isDepartureModalOpen && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-md p-4" onClick={() => setIsDepartureModalOpen(false)}>
-              <div className="bg-card dark:bg-dark-card rounded-2xl shadow-2xl max-w-lg w-full border border-border dark:border-dark-border" onClick={e => e.stopPropagation()}>
+              <div className="bg-card dark:bg-dark-card rounded-2xl shadow-2xl max-w-lg w-full border border-border dark:border-dark-border animate-scale-in" onClick={e => e.stopPropagation()}>
                   <div className="p-6 border-b border-border dark:border-dark-border flex justify-between items-center">
                       <h3 className="text-2xl font-bold font-display">{editingDeparture ? 'Edit' : 'Schedule'} Departure</h3>
                   </div>
@@ -680,6 +837,19 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
             }} 
           />
       )}
+
+      <style>{`
+        .animate-scale-in {
+            animation: scaleIn 0.3s ease-out;
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+      `}</style>
     </div>
   );
 };

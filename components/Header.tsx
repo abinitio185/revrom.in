@@ -21,7 +21,7 @@ interface HeaderProps {
 
 const ChevronDownIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 01.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
     </svg>
 );
 
@@ -86,13 +86,18 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
   const visibleCustomPages = customPages.filter(p => p.isVisible);
 
   return (
-    <header className="bg-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border dark:border-dark-border">
+    <header className="bg-card/80 dark:bg-dark-card/80 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border dark:border-dark-border transition-all duration-300">
       <nav className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-        <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer">
+        <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer outline-none focus:ring-2 focus:ring-brand-primary rounded-lg p-1">
           {siteContent.logoUrl ? (
-              <img src={siteContent.logoUrl} alt="Agency Logo" className="h-10 w-auto" />
+              <img 
+                src={siteContent.logoUrl} 
+                alt="Agency Logo" 
+                style={{ height: `${siteContent.logoHeight}px` }}
+                className="w-auto max-w-full object-contain transition-all duration-300" 
+              />
           ) : (
-              <div className="text-foreground dark:text-dark-foreground font-display font-bold text-xl">Agency Logo</div>
+              <div className="text-foreground dark:text-dark-foreground font-display font-bold text-xl sm:text-2xl">Agency Logo</div>
           )}
         </button>
         {/* Desktop Nav */}
@@ -188,7 +193,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigateHome, onNavigateContact, onNa
                   <h2 id="mobile-menu-title" className="sr-only">Main Menu</h2>
                   <button onClick={() => handleMobileNavClick(onNavigateHome)}>
                      {siteContent.logoUrl ? (
-                        <img src={siteContent.logoUrl} alt="Agency Logo" className="h-10 w-auto" />
+                        <img src={siteContent.logoUrl} alt="Agency Logo" style={{ height: `${siteContent.logoHeight * 0.8}px` }} className="w-auto max-w-full" />
                      ) : (
                         <div className="text-foreground dark:text-dark-foreground">Agency Logo</div>
                      )}

@@ -160,6 +160,7 @@ export interface SiteContent {
 
     // Footer/Branding
     logoUrl: string;
+    logoHeight: number;
     footerTagline: string;
 
     // Theme & Layout

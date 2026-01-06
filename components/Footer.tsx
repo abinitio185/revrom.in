@@ -24,87 +24,115 @@ const InstagramIcon: React.FC<{className?: string}> = ({ className }) => (
     </svg>
 );
 
-const YouTubeIcon: React.FC<{className?: string}> = ({ className }) => (
+const YoutubeIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
     </svg>
 );
 
-const Footer: React.FC<FooterProps> = ({
-  onNavigateHome,
-  onNavigateContact,
-  onNavigateAdmin,
-  onNavigateBlog,
-  onNavigateGallery,
-  onNavigateCustomize,
-  siteContent,
+const Footer: React.FC<FooterProps> = ({ 
+  onNavigateHome, 
+  onNavigateContact, 
+  onNavigateAdmin, 
+  onNavigateBlog, 
+  onNavigateGallery, 
+  onNavigateCustomize, 
+  siteContent 
 }) => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground border-t border-border dark:border-dark-border">
-      <div className="container mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-          <div className="col-span-2 lg:col-span-2">
-            <img src={siteContent.logoUrl} alt="Revrom.in Logo" className="h-10 w-auto mb-4" />
-            <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground">
-              {siteContent.footerTagline || "Unforgettable Motorcycle Adventures in the Heart of the Himalayas."}
+    <footer className="bg-card dark:bg-dark-card border-t border-border dark:border-dark-border pt-16 pb-8">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Brand Column */}
+          <div className="space-y-6">
+            <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer group">
+              {siteContent.logoUrl ? (
+                <img 
+                  src={siteContent.logoUrl} 
+                  alt="Revrom Logo" 
+                  style={{ height: `${siteContent.logoHeight}px` }} 
+                  className="w-auto object-contain transition-transform group-hover:scale-105" 
+                />
+              ) : (
+                <span className="text-2xl font-bold font-display text-brand-primary">REVROM.IN</span>
+              )}
+            </button>
+            <p className="text-muted-foreground dark:text-dark-muted-foreground leading-relaxed italic">
+              "{siteContent.footerTagline}"
             </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Home</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateBlog(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Blog</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateGallery(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Gallery</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateContact(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Contact</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Adventures</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">All Tours</a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigateCustomize(); }} className="text-muted-foreground dark:text-dark-muted-foreground hover:text-brand-primary transition-colors">Customize Tour</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground dark:text-dark-foreground mb-4">Connect</h4>
-            <div className="flex space-x-4 text-muted-foreground dark:text-dark-muted-foreground">
-              {siteContent.facebookUrl && (
-                  <a href={siteContent.facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-brand-primary transition-colors">
-                    <FacebookIcon className="w-6 h-6" />
-                  </a>
-              )}
-              {siteContent.instagramUrl && (
-                  <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-brand-primary transition-colors">
-                    <InstagramIcon className="w-6 h-6" />
-                  </a>
-              )}
-              {siteContent.youtubeUrl && (
-                  <a href={siteContent.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-brand-primary transition-colors">
-                    <YouTubeIcon className="w-6 h-6" />
-                  </a>
-              )}
+            <div className="flex items-center space-x-4">
+              <a href={siteContent.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
+                <FacebookIcon className="w-6 h-6" />
+              </a>
+              <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
+                <InstagramIcon className="w-6 h-6" />
+              </a>
+              <a href={siteContent.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
+                <YoutubeIcon className="w-6 h-6" />
+              </a>
             </div>
           </div>
+
+          {/* Navigation Column */}
+          <div>
+            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Quick Links</h3>
+            <ul className="space-y-4">
+              <li><button onClick={onNavigateHome} className="text-muted-foreground hover:text-brand-primary transition-colors">Home</button></li>
+              <li><button onClick={onNavigateCustomize} className="text-muted-foreground hover:text-brand-primary transition-colors">Customize Your Tour</button></li>
+              <li><button onClick={onNavigateGallery} className="text-muted-foreground hover:text-brand-primary transition-colors">Photo Gallery</button></li>
+              <li><button onClick={onNavigateBlog} className="text-muted-foreground hover:text-brand-primary transition-colors">Travel Blog</button></li>
+              <li><button onClick={onNavigateContact} className="text-muted-foreground hover:text-brand-primary transition-colors">Contact Us</button></li>
+            </ul>
+          </div>
+
+          {/* Contact Column */}
+          <div>
+            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Reach Us</h3>
+            <ul className="space-y-4 text-muted-foreground dark:text-dark-muted-foreground">
+              <li className="flex items-start">
+                <span className="text-brand-primary mr-3 mt-1">📍</span>
+                <span>{siteContent.contactAddress}</span>
+              </li>
+              <li className="flex items-center">
+                <span className="text-brand-primary mr-3">📞</span>
+                <span>{siteContent.contactPhone}</span>
+              </li>
+              <li className="flex items-center">
+                <span className="text-brand-primary mr-3">✉️</span>
+                <a href={`mailto:${siteContent.contactEmail}`} className="hover:text-brand-primary transition-colors break-all">
+                  {siteContent.contactEmail}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Newsletter / CTA Column */}
+          <div>
+            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Newsletter</h3>
+            <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground mb-4">Subscribe to receive travel tips and exclusive early-bird offers.</p>
+            <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); alert("Thanks for subscribing!"); }}>
+              <input 
+                type="email" 
+                placeholder="Your email address" 
+                className="w-full p-3 text-sm rounded-md bg-background dark:bg-dark-background border border-border dark:border-dark-border focus:ring-brand-primary focus:ring-1 outline-none text-foreground dark:text-dark-foreground" 
+              />
+              <button type="submit" className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-2 px-4 rounded-md transition-colors">
+                Subscribe
+              </button>
+            </form>
+          </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-border dark:border-dark-border text-center text-sm text-muted-foreground dark:text-dark-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Revrom.in. All rights reserved.</p>
-          <p className="mt-1">
-            <a href="#" onClick={(e) => { e.preventDefault(); onNavigateAdmin(); }} className="hover:text-brand-primary transition-colors">
-              Admin Login
-            </a>
-          </p>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-border dark:border-dark-border pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground dark:text-dark-muted-foreground uppercase tracking-widest font-semibold">
+          <p>© {currentYear} REVROM.IN. RIDE. ROAM. RELAX. ALL RIGHTS RESERVED.</p>
+          <div className="flex items-center space-x-6">
+            <button className="hover:text-brand-primary transition-colors">Privacy Policy</button>
+            <button className="hover:text-brand-primary transition-colors">Terms of Service</button>
+            <button onClick={onNavigateAdmin} className="hover:text-brand-primary transition-colors opacity-50 hover:opacity-100">Admin Login</button>
+          </div>
         </div>
       </div>
     </footer>

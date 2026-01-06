@@ -53,7 +53,7 @@ export const trips: Trip[] = [
     title: 'Nubra Valley Expeditions',
     destination: 'Ladakh, India',
     shortDescription: 'Explore the enigmatic cold desert of Nubra Valley, ride camels, and visit ancient monasteries.',
-    longDescription: '### A Journey to the Land of Contrasts\n\nDiscover a land of contrasts on this tour to the Nubra Valley. Separated from the Indus Valley by the mighty Khardung La, Nubra is a serene desert oasis with lush villages, ancient monasteries, and the famous double-humped Bactrian camels.\n\n#### Highlights of the Expedition\n* **Khardung La Pass:** Ride over one of the world\'s highest motorable roads.\n* **Desert Oasis:** Explore the unique sand dunes of Hunder at high altitude.\n* **Bactrian Camels:** Enjoy a ride on the rare double-humped camels.\n* **Diskit Monastery:** Visit the oldest and largest monastery in Nubra Valley, with its iconic Maitreya Buddha statue.\n\nThis tour offers a perfect blend of manageable adventure riding and rich cultural exploration, ideal for those looking to experience the best of Ladakh in a shorter timeframe.',
+    longDescription: '### A Journey to the Land of Contrasts\n\nDiscover a land of contrasts on this tour to the Nubra Valley. Separated from the Industry Valley by the mighty Khardung La, Nubra is a serene desert oasis with lush villages, ancient monasteries, and the famous double-humped Bactrian camels.\n\n#### Highlights of the Expedition\n* **Khardung La Pass:** Ride over one of the world\'s highest motorable roads.\n* **Desert Oasis:** Explore the unique sand dunes of Hunder at high altitude.\n* **Bactrian Camels:** Enjoy a ride on the rare double-humped camels.\n* **Diskit Monastery:** Visit the oldest and largest monastery in Nubra Valley, with its iconic Maitreya Buddha statue.\n\nThis tour offers a perfect blend of manageable adventure riding and rich cultural exploration, ideal for those looking to experience the best of Ladakh in a shorter timeframe.',
     duration: 7,
     price: 160000,
     imageUrl: 'https://picsum.photos/seed/ladakh-nubra/800/600',
@@ -468,6 +468,7 @@ export const siteContent: SiteContent = {
 
     // Footer/Brand Defaults
     logoUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAABFCAMAAAC3zTykAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURf///87Ozv///83NzbS0tAC53v4AAAMESURBVGFjYIAEAAAA//8AIAABAAAAAADgIQNuAACBlAX+iIAnAAAAAElFTkSuQmCC",
+    logoHeight: 64,
     footerTagline: "Unforgettable Motorcycle Adventures in the Heart of the Himalayas.",
     
     activeTheme: 'Default',

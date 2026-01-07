@@ -1,54 +1,57 @@
-
-
 import { GoogleGenAI } from "@google/genai";
 import type { Trip } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  console.warn("API_KEY is not set. Gemini features will not be available.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+// The API key is obtained exclusively from process.env.API_KEY.
+// Always instantiate the SDK with new GoogleGenAI({ apiKey: process.env.API_KEY }).
 
 export const generateBlogImage = async (title: string, excerpt: string): Promise<string> => {
-  if (!API_KEY) {
-    // Return a default placeholder if the API key is not available
+  if (!process.env.API_KEY) {
+    console.warn("API_KEY is not set. Gemini features will not be available.");
     return "https://picsum.photos/seed/fallback-image/800/600";
   }
 
+  // Create a new GoogleGenAI instance right before making an API call to ensure it uses the most up-to-date configuration.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `Photorealistic, vibrant photograph for a premium travel blog. Subject: Himalayan motorcycle adventure. The blog post is titled "${title}", focusing on: ${excerpt}. Capture the spirit of adventure with epic landscapes, winding mountain roads, and dramatic lighting. No text or logos.`;
 
   try {
-    const response = await ai.models.generateImages({
-      model: 'imagen-4.0-generate-001',
-      prompt: prompt,
-      config: {
-        numberOfImages: 1,
-        aspectRatio: '4:3',
-        outputMimeType: 'image/jpeg',
+    // Generate images using gemini-2.5-flash-image as the default for high-quality general image generation tasks.
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [{ text: prompt }],
       },
+      config: {
+        imageConfig: {
+          aspectRatio: "4:3"
+        }
+      }
     });
 
-    if (response.generatedImages && response.generatedImages.length > 0) {
-      const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
-      return `data:image/jpeg;base64,${base64ImageBytes}`;
-    } else {
-      console.warn("No image data found in Imagen response.");
-      return "https://picsum.photos/seed/fallback-image/800/600";
+    // The output response may contain both image and text parts; iterate through all parts to find the image part.
+    if (response.candidates?.[0]?.content?.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const base64EncodeString: string = part.inlineData.data;
+          return `data:image/png;base64,${base64EncodeString}`;
+        }
+      }
     }
+
+    console.warn("No image data found in Gemini response.");
+    return "https://picsum.photos/seed/fallback-image/800/600";
   } catch (error) {
-    console.error("Error generating blog image with Imagen:", error);
+    console.error("Error generating blog image with Gemini:", error);
     return "https://picsum.photos/seed/fallback-error/800/600";
   }
 };
 
-
 export const generatePackingList = async (trip: Trip): Promise<string> => {
-  if (!API_KEY) {
-    return Promise.resolve("API key not configured. Cannot generate packing list.");
+  if (!process.env.API_KEY) {
+    return "API key not configured. Cannot generate packing list.";
   }
 
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `Generate a detailed packing list for a ${trip.duration}-day motorcycle tour in Ladakh, India. The main activities are: ${trip.activities.join(', ')}. The tour difficulty is rated as ${trip.difficulty}. The response should be in markdown format. 
   
   Please organize the items into these specific categories:
@@ -63,11 +66,13 @@ export const generatePackingList = async (trip: Trip): Promise<string> => {
   Provide specific recommendations, especially concerning high-altitude and motorcycle safety. Emphasize the importance of layers and protection against sun and cold.`;
 
   try {
+    // Basic Text Tasks (e.g., list generation): Use gemini-3-flash-preview
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
     });
-    return response.text;
+    // Use the .text property to extract the generated string content.
+    return response.text || "Failed to generate packing list content.";
   } catch (error) {
     console.error("Error generating packing list:", error);
     return "Sorry, we couldn't generate a packing list at this time. Please try again later.";
@@ -83,10 +88,11 @@ interface CustomItineraryPreferences {
 }
 
 export const generateCustomItinerary = async (preferences: CustomItineraryPreferences, existingTrips: Trip[]): Promise<string> => {
-    if (!API_KEY) {
-        return Promise.resolve("AI features are currently unavailable. Please contact us directly for a custom itinerary.");
+    if (!process.env.API_KEY) {
+        return "AI features are currently unavailable. Please contact us directly for a custom itinerary.";
     }
 
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const tripExamplesString = existingTrips.map(trip => 
         `- ${trip.title} (${trip.duration} days in ${trip.destination}): ${trip.shortDescription}`
     ).join('\n');
@@ -114,11 +120,12 @@ The itinerary should include:
 Make the itinerary sound exciting, safe, and authentic. Emphasize the unique experiences. Ensure the pacing is realistic for the duration and chosen regions. Do not include sections for 'Inclusions', 'Exclusions', or price estimates.`;
 
     try {
+        // Complex Text Tasks (advanced reasoning and planning): Use gemini-3-pro-preview
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-pro-preview',
             contents: prompt,
         });
-        return response.text;
+        return response.text || "Failed to generate custom itinerary content.";
     } catch (error) {
         console.error("Error generating custom itinerary:", error);
         throw new Error("Failed to generate custom itinerary. The AI service may be temporarily unavailable.");

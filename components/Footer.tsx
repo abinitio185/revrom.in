@@ -12,24 +12,6 @@ interface FooterProps {
   siteContent: SiteContent;
 }
 
-const FacebookIcon: React.FC<{className?: string}> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-    </svg>
-);
-
-const InstagramIcon: React.FC<{className?: string}> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.057 1.645-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z" />
-    </svg>
-);
-
-const YoutubeIcon: React.FC<{className?: string}> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-    </svg>
-);
-
 const Footer: React.FC<FooterProps> = ({ 
   onNavigateHome, 
   onNavigateContact, 
@@ -42,96 +24,77 @@ const Footer: React.FC<FooterProps> = ({
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-card dark:bg-dark-card border-t border-border dark:border-dark-border pt-16 pb-8">
-      <div className="container mx-auto px-4 sm:px-6">
+    <footer className="bg-foreground text-white pt-20 pb-12">
+      <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          {/* Brand Column */}
           <div className="space-y-6">
-            <button onClick={onNavigateHome} className="flex items-center space-x-3 cursor-pointer group">
-              {siteContent.logoUrl ? (
-                <img 
-                  src={siteContent.logoUrl} 
-                  alt="Revrom Logo" 
-                  style={{ height: `${siteContent.logoHeight}px` }} 
-                  className="w-auto object-contain transition-transform group-hover:scale-105" 
-                />
-              ) : (
-                <span className="text-2xl font-bold font-display text-brand-primary">REVROM.IN</span>
-              )}
-            </button>
-            <p className="text-muted-foreground dark:text-dark-muted-foreground leading-relaxed italic">
-              "{siteContent.footerTagline}"
+            <button onClick={onNavigateHome} className="block text-3xl font-black font-display tracking-tighter text-brand-primary transition-transform active:scale-95">REVROM</button>
+            <p className="text-slate-400 font-medium text-sm leading-relaxed">
+              "{siteContent.footerTagline}" Crafting uncompromised Himalayan expeditions since 2018.
             </p>
-            <div className="flex items-center space-x-4">
-              <a href={siteContent.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
-                <FacebookIcon className="w-6 h-6" />
-              </a>
-              <a href={siteContent.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
-                <InstagramIcon className="w-6 h-6" />
-              </a>
-              <a href={siteContent.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-brand-primary transition-colors">
-                <YoutubeIcon className="w-6 h-6" />
-              </a>
+            <div className="flex gap-4">
+              {['Instagram', 'Facebook', 'Youtube'].map(social => (
+                <a key={social} href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-primary hover:border-brand-primary transition-all active:scale-90">
+                  <span className="sr-only">{social}</span>
+                  <div className="w-4 h-4 bg-white/50 rounded-sm"></div>
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Navigation Column */}
           <div>
-            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Quick Links</h3>
-            <ul className="space-y-4">
-              <li><button onClick={onNavigateHome} className="text-muted-foreground hover:text-brand-primary transition-colors">Home</button></li>
-              <li><button onClick={onNavigateCustomize} className="text-muted-foreground hover:text-brand-primary transition-colors">Customize Your Tour</button></li>
-              <li><button onClick={onNavigateGallery} className="text-muted-foreground hover:text-brand-primary transition-colors">Photo Gallery</button></li>
-              <li><button onClick={onNavigateBlog} className="text-muted-foreground hover:text-brand-primary transition-colors">Travel Blog</button></li>
-              <li><button onClick={onNavigateContact} className="text-muted-foreground hover:text-brand-primary transition-colors">Contact Us</button></li>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary mb-6">Navigation</h3>
+            <ul className="space-y-3 font-bold text-xs uppercase tracking-wider">
+              <li><button onClick={onNavigateHome} className="text-slate-400 hover:text-white transition-colors">Basecamp</button></li>
+              <li><button onClick={onNavigateHome} className="text-slate-400 hover:text-white transition-colors">All Expeditions</button></li>
+              <li><button onClick={onNavigateCustomize} className="text-slate-400 hover:text-white transition-colors">Custom Routes</button></li>
+              <li><button onClick={onNavigateGallery} className="text-slate-400 hover:text-white transition-colors">Gallery</button></li>
+              <li><button onClick={onNavigateBlog} className="text-slate-400 hover:text-white transition-colors">Logbook</button></li>
             </ul>
           </div>
 
-          {/* Contact Column */}
           <div>
-            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Reach Us</h3>
-            <ul className="space-y-4 text-muted-foreground dark:text-dark-muted-foreground">
-              <li className="flex items-start">
-                <span className="text-brand-primary mr-3 mt-1">📍</span>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary mb-6">Basecamp HQ</h3>
+            <ul className="space-y-4 text-slate-400 font-medium text-xs">
+              <li className="flex items-start gap-3">
+                <span className="text-brand-primary">📍</span>
                 <span>{siteContent.contactAddress}</span>
               </li>
-              <li className="flex items-center">
-                <span className="text-brand-primary mr-3">📞</span>
+              <li className="flex items-center gap-3">
+                <span className="text-brand-primary">📞</span>
                 <span>{siteContent.contactPhone}</span>
               </li>
-              <li className="flex items-center">
-                <span className="text-brand-primary mr-3">✉️</span>
-                <a href={`mailto:${siteContent.contactEmail}`} className="hover:text-brand-primary transition-colors break-all">
+              <li className="flex items-center gap-3">
+                <span className="text-brand-primary">✉️</span>
+                <a href={`mailto:${siteContent.contactEmail}`} className="hover:text-white transition-colors break-all underline underline-offset-4">
                   {siteContent.contactEmail}
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter / CTA Column */}
-          <div>
-            <h3 className="text-lg font-bold font-display mb-6 text-foreground dark:text-dark-foreground">Newsletter</h3>
-            <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground mb-4">Subscribe to receive travel tips and exclusive early-bird offers.</p>
-            <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); alert("Thanks for subscribing!"); }}>
+          <div className="bg-white/5 p-8 rounded-[2rem] border border-white/10 shadow-2xl">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary mb-3">Newsletter</h3>
+            <p className="text-[11px] text-slate-400 mb-6 font-medium">Join 5,000+ travelers for monthly frontier updates and gear lists.</p>
+            <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
               <input 
                 type="email" 
-                placeholder="Your email address" 
-                className="w-full p-3 text-sm rounded-md bg-background dark:bg-dark-background border border-border dark:border-dark-border focus:ring-brand-primary focus:ring-1 outline-none text-foreground dark:text-dark-foreground" 
+                placeholder="Your Email" 
+                className="w-full p-4 text-xs rounded-xl bg-black/40 border border-white/10 focus:border-brand-primary outline-none text-white font-bold transition-all" 
               />
-              <button type="submit" className="w-full bg-brand-primary hover:bg-brand-primary-dark text-white font-bold py-2 px-4 rounded-md transition-colors">
+              <button type="submit" className="w-full bg-brand-primary hover:bg-white hover:text-black text-white font-black uppercase tracking-widest py-3.5 rounded-xl transition-all active:scale-95 shadow-lg">
                 Subscribe
               </button>
             </form>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-border dark:border-dark-border pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground dark:text-dark-muted-foreground uppercase tracking-widest font-semibold">
-          <p>© {currentYear} REVROM.IN. RIDE. ROAM. RELAX. ALL RIGHTS RESERVED.</p>
-          <div className="flex items-center space-x-6">
-            <button className="hover:text-brand-primary transition-colors">Privacy Policy</button>
-            <button className="hover:text-brand-primary transition-colors">Terms of Service</button>
-            <button onClick={onNavigateAdmin} className="hover:text-brand-primary transition-colors opacity-50 hover:opacity-100">Admin Login</button>
+        <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">
+          <p>© {currentYear} REVROM EXPEDITIONS. RIDE. ROAM. RELAX.</p>
+          <div className="flex gap-8">
+            <button className="hover:text-white transition-colors">Privacy Policy</button>
+            <button className="hover:text-white transition-colors">Terms of Service</button>
+            <button onClick={onNavigateAdmin} className="opacity-30 hover:opacity-100 transition-opacity">System Login</button>
           </div>
         </div>
       </div>

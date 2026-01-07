@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface SearchAndFilterProps {
@@ -32,101 +31,79 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     destinations,
     onClearFilters,
 }) => {
-    const inputClass = "w-full pl-3 pr-8 py-3 border border-border dark:border-dark-border rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-brand-primary bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground font-bold text-xs uppercase tracking-wider appearance-none transition-all outline-none";
-    const labelClass = "block text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground dark:text-dark-muted-foreground mb-1.5 ml-1";
-
+    const inputClass = "w-full p-3 border border-border dark:border-dark-border rounded-md focus:ring-brand-primary focus:border-brand-primary bg-card dark:bg-dark-card text-foreground dark:text-dark-foreground";
     return (
-        <div className="glass dark:bg-dark-card/80 p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-border dark:border-dark-border max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-end">
-                
-                {/* Search Bar - Larger on desktop */}
-                <div className="lg:col-span-4">
-                    <label htmlFor="search" className={labelClass}>Search Term</label>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            id="search"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="NAME OR TERRAIN..."
-                            className={`${inputClass} pl-10`}
-                        />
-                        <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-primary" />
-                    </div>
+        <div className="bg-card dark:bg-dark-card p-6 rounded-lg shadow-lg space-y-4 md:space-y-0 border border-border dark:border-dark-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+                {/* Search Bar */}
+                <div className="relative md:col-span-2 lg:col-span-2">
+                    <label htmlFor="search" className="sr-only">Search tours</label>
+                    <input
+                        type="text"
+                        id="search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search by name, destination..."
+                        className="w-full pl-10 pr-4 py-3 border border-border dark:border-dark-border rounded-md focus:ring-brand-primary focus:border-brand-primary bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground"
+                    />
+                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>
 
                 {/* Destination Filter */}
-                <div className="lg:col-span-2">
-                    <label htmlFor="destination" className={labelClass}>Territory</label>
-                    <div className="relative">
-                        <select
-                            id="destination"
-                            value={destinationFilter}
-                            onChange={(e) => setDestinationFilter(e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="all">ALL REGIONS</option>
-                            {destinations.map(dest => (
-                                <option key={dest} value={dest}>{dest.toUpperCase()}</option>
-                            ))}
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brand-primary">
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                <div>
+                    <label htmlFor="destination" className="sr-only">Destination</label>
+                    <select
+                        id="destination"
+                        value={destinationFilter}
+                        onChange={(e) => setDestinationFilter(e.target.value)}
+                        className={inputClass}
+                    >
+                        <option value="all">All Destinations</option>
+                        {destinations.map(dest => (
+                            <option key={dest} value={dest}>{dest}</option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* Duration Filter */}
-                <div className="lg:col-span-2">
-                    <label htmlFor="duration" className={labelClass}>Duration</label>
-                    <div className="relative">
-                        <select
-                            id="duration"
-                            value={durationFilter}
-                            onChange={(e) => setDurationFilter(e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="all">ANY DAYS</option>
-                            <option value="1-7">1-7 DAYS</option>
-                            <option value="8-14">8-14 DAYS</option>
-                            <option value="15-999">15+ DAYS</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brand-primary">
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
+                <div>
+                    <label htmlFor="duration" className="sr-only">Duration</label>
+                    <select
+                        id="duration"
+                        value={durationFilter}
+                        onChange={(e) => setDurationFilter(e.target.value)}
+                        className={inputClass}
+                    >
+                        <option value="all">All Durations</option>
+                        <option value="1-7">Up to 7 Days</option>
+                        <option value="8-14">8 - 14 Days</option>
+                        <option value="15-999">15+ Days</option>
+                    </select>
                 </div>
 
                 {/* Difficulty Filter */}
-                <div className="lg:col-span-2">
-                    <label htmlFor="difficulty" className={labelClass}>Difficulty</label>
-                    <div className="relative">
-                        <select
-                            id="difficulty"
-                            value={difficultyFilter}
-                            onChange={(e) => setDifficultyFilter(e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="all">ALL SKILLS</option>
-                            <option value="Intermediate">INTERMEDIATE</option>
-                            <option value="Advanced">ADVANCED</option>
-                            <option value="Expert">EXPERT</option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brand-primary">
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Reset / Action Button */}
-                <div className="lg:col-span-2 flex items-end h-full">
-                    <button
-                        onClick={onClearFilters}
-                        className="w-full bg-foreground dark:bg-white dark:text-black text-white px-4 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-primary dark:hover:bg-brand-primary dark:hover:text-white transition-all shadow-lg active:scale-95"
+                <div>
+                    <label htmlFor="difficulty" className="sr-only">Difficulty</label>
+                    <select
+                        id="difficulty"
+                        value={difficultyFilter}
+                        onChange={(e) => setDifficultyFilter(e.target.value)}
+                        className={inputClass}
                     >
-                        Reset Filters
-                    </button>
+                        <option value="all">All Difficulties</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Expert">Expert</option>
+                    </select>
                 </div>
+            </div>
+             <div className="flex justify-end pt-2">
+                <button
+                    onClick={onClearFilters}
+                    className="text-sm font-semibold text-brand-primary hover:text-brand-primary-dark transition-colors"
+                >
+                    Clear Filters
+                </button>
             </div>
         </div>
     );
